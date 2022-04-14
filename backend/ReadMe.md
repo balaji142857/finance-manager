@@ -34,8 +34,3 @@
 - execute `npm start`
 - once the above command completes, open this url: `http://localhost:4200`
 
-
-``` 
-
-docker build --build-arg JAR_FILE=../build/libs/finance-manager-1.0-SNAPSHOT.jar -t balaji142857/finman .
-```
