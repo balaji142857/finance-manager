@@ -1,0 +1,21 @@
+.filter-wrapper{
+  .f-row{
+    display: flex;
+    justify-content: space-between;
+    mat-number-input, mat-form-field:not(.flex-30) {
+      flex-basis: 45%;
+    }
+    mat-form-field.flex-30 {
+      flex-basis: 30%;
+    }
+    .right {
+      flex-basis: 20%;
+      justify-content: space-around;
+      display: flex;
+      button {
+        flex-grow: 1;
+        margin: 0 10px;
+      }
+    }
+  }
+}

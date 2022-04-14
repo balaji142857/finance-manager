@@ -1,0 +1,35 @@
+<div class="wrapper">
+  <mat-toolbar color="primary" class="mat-elevation-z8">
+  <mat-toolbar-row>
+    <div class="left_portion">
+      <app-hamburger-button (hamClicked)="hamClicked()"></app-hamburger-button>
+      <span class="title">{{ title }}</span>
+    </div>
+    <span class="example-spacer"></span>
+    <!-- <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngFor="let item of menuItems" [routerLink]="[item.link]">
+        <mat-icon> {{ item.icon }} </mat-icon>
+        <span> {{ item.title }} </span>
+      </button>
+    </mat-menu> -->
+  </mat-toolbar-row>
+</mat-toolbar>
+<mat-drawer-container class="example-container" autosize>
+  <mat-drawer #drawer class="example-sidenav mat-elevation-z8" mode="side">
+    <p style="visibility: hidden;">Lorem, ipsum dolor sit amet consectetumr.</p>
+    <app-nav></app-nav>
+  </mat-drawer>
+  <div class="example-sidenav-content">
+    <router-outlet></router-outlet>
+  </div>
+</mat-drawer-container>
+
+<div class="footer" color="primary">
+  <span class="connected-user"> {{ connectedUser }}</span>
+  <!-- <mat-progress-bar class="pb" mode="query" color="warn"></mat-progress-bar> -->
+</div>
+
+</div>

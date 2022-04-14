@@ -1,0 +1,43 @@
+<div>
+  <form expFrom="#ngForm">
+  <mat-form-field>
+    <input matInput [(ngModel)]="exp.amount" name="amount"
+    placeholder="amount" type="number">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select [(ngModel)]="exp.category" placeholder="Category" name="category">
+      <mat-option *ngFor="let cat of categories" [value]="cat.id">
+        {{ cat.name }}
+      </mat-option>
+    </mat-select>
+   </mat-form-field>
+  <!--<mat-form-field>
+    <mat-select [(ngModel)]="exp.subCat" placeholder="Subcategory" name="subcategory">
+      <mat-option *ngFor="let subCat of cat.subCategories">
+        {{ subCat.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field> -->
+  <mat-form-field>
+    <mat-select [(ngModel)]="exp.asset" placeholder="Asset" name="asset">
+      <mat-option *ngFor="let asset of assets" [value]="asset.id">
+        {{ asset.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Date</mat-label>
+    <input matInput [matDatepicker]="datePicker" [(ngModel)]="exp.transactionDate" name="transactionDate">
+    <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+    <mat-datepicker #datePicker color="primary"></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="exp.comment" placeholder="Comment" name="comment">
+  </mat-form-field>
+  files
+  <div>
+    <button mat-raised-button (click)="cancel()">CANCEL</button>
+    <button mat-raised-button (click)="confirm()">CONFIRM</button>
+  </div>
+</form>
+</div>

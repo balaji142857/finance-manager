@@ -1,0 +1,20 @@
+<mat-card class="card-wrapper">
+  <div class="header">
+    <div class="header-text">
+      <mat-icon class="example-header-image">description</mat-icon>
+      <div class="title_wrapper">
+        <div class="title">Load Expenses</div>
+        <div class="subtitle">load expenses from bank export statement</div>
+      </div>
+    </div>
+    <!-- <div class="header-right">
+      <mat-icon (click)="openExpense(null, $event)">add</mat-icon>
+    </div> -->
+  </div>
+  <mat-card-content class="card-content-wrapper">
+    <form uploadForm="#ngForm">
+      <app-file-upload name="files" [formats]="importFormats" [(ngModel)]="expenseFiles"></app-file-upload>
+      <button mat-raised-button (click)="import()">Import</button>
+    </form>
+  </mat-card-content>
+</mat-card>

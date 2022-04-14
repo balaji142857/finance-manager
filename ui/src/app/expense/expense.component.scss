@@ -1,0 +1,55 @@
+@import '~@angular/material/theming';
+@import '../../assets/styles/page_card';
+@import '../../assets/styles/table';
+@include mat-core();
+
+
+$primary: mat-palette($mat-indigo, 600, 500, 900);
+$accent: mat-palette($mat-amber, A400, A300, A600);
+
+
+.expense-table{
+  margin-top: 2%;
+}
+
+.example-element-detail {
+  overflow: hidden;
+  justify-content: center;
+  display: flex;
+  font-weight: bold;
+}
+.mat-sort-header-indicator {
+  color: white;
+}
+
+.example-element-row{
+  cursor: pointer;
+}
+
+.example-footer-row {
+  font-weight: bold;
+  font-size: 45px !important;
+}
+
+.example-element-symbol {
+  font-weight: bold;
+  font-size: 40px;
+  line-height: normal;
+}
+
+.example-element-description {
+  padding: 16px;
+  letter-spacing: 1.5px;
+  font-weight: normal;
+  font-size: 30px;
+}
+
+.example-element-description-attribution {
+  opacity: 0.5;
+}
+
+
+
+
+
+

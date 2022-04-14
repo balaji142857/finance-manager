@@ -1,0 +1,21 @@
+@import '../../assets/styles/page_card';
+
+$padding-size: 16px;
+
+
+  .chart-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: $padding-size;
+    .chart-row {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-top: 2%;
+      .chart-section {
+        flex-basis: 49%;
+      }
+    }
+  }
+

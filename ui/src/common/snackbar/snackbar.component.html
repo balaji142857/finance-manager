@@ -1,0 +1,5 @@
+<div class="wrapper" [class.success]="data.class === 'success'"
+                     [class.error]="data.class === 'error'">
+	<div> {{ data.message }}</div>
+	<div> <mat-icon (click)="close()">close</mat-icon></div>
+</div>

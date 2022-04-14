@@ -1,0 +1,34 @@
+<div>
+<form catForm ="#ngForm">
+  <mat-form-field>
+    <input matInput name="id" [(ngModel)]="cat.id" placeholder="id" [disabled]="true">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput name="name" [(ngModel)]="cat.name" placeholder="name">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput name="comment" [(ngModel)]="cat.comment" placeholder="Comment">
+  </mat-form-field>
+  <mat-divider></mat-divider>
+  <div>
+    <mat-icon (click)="addSubCat()">add</mat-icon>
+  </div>
+  <mat-chip-list>
+    <mat-chip *ngFor="let subCat of cat.subCategories; let i = index"
+    [removable]="true" color="primary" (removed)="handleRemove(subCat)">
+      <div class="subcat_wrapper">
+        <mat-form-field >
+          <input matInput [name]="'value'+i" [disabled]="!cat.subCategories[i].isEdited && cat.subCategories[i].id"
+          [(ngModel)]="cat.subCategories[i].name">
+        </mat-form-field>
+        <mat-icon [ngClass]="{ highlight: !cat.subCategories[i].isEdited}" (click)="cat.subCategories[i].isEdited = true">edit</mat-icon>
+        <mat-icon matChipRemove>delete</mat-icon>
+    </div>
+    </mat-chip>
+  </mat-chip-list>
+  <div>
+    <button mat-raised-button (click)="cancel()">CANCEL</button>
+    <button mat-raised-button (click)="confirm()">{{ cat.id ? 'CONFIRM' : 'CREATE' }}</button>
+  </div>
+</form>
+</div>

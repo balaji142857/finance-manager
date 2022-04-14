@@ -1,0 +1,47 @@
+server:
+  port: 8980
+spring:
+  application:
+    name: finance-manager
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/user-mgmt"
+    username: postgres
+    password: password
+    platform: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+      org:
+        hibernate:
+          envers:
+            store_data_at_delete: true
+            audit_table_prefix: HIST_
+            audit_table_suffix: _AUD
+            do_not_audit_optimistic_locking_field: false
+app:
+  allowedOrigins: "*"
+bulk-imports:
+  import-formats: 
+    ICICI:   
+      date:
+        columnIndex: 0
+        columnFormat: "dd/MM/yyyy"
+        columnName: "Transaction Date"
+      transactionDetail:
+        columnIndex: 1
+        columnName: "Transaction Remarks"
+      amount:
+        columnIndex: 2
+        columnName: "Withdrawal Amount (INR )"
+      category:
+        columnIndex: 3
+        columnName: "Category"
+      subCategory:
+        columnIndex: 4
+        columnName: "Sub Category"  
+      comment:
+        columnIndex: 5
+        columnName: "Comments"

@@ -1,0 +1,23 @@
+<div class="wrapper" (drop)="drop($event)" (dragover)="allowDrop($event)">
+	<label for="fileUpload" class="test" >
+			Click here or drop file below
+	</label>
+	<div class="added_files" >
+		{{ files | json }}
+			<div *ngFor="let file of files;let i = index;" class="files">
+				<div class="name">{{ file.name }}</div>
+				<div class="size">{{ Math.round(file.size / 1024) }} KB </div>
+				<div class="comment">
+					<mat-select [(ngModel)]="files[i].format" placeholder="File format">
+						<mat-option *ngFor="let format of formats" [value]="format">{{ format }}</mat-option>
+					</mat-select>
+				</div>
+				<div class="action">
+					<mat-icon (click)="download(file, i, $event)" class="download">cloud_download</mat-icon>
+					<mat-icon (click)="delete(file, i, $event)" class="danger">delete</mat-icon>
+				</div>
+
+			</div>
+		</div>
+	<input type="file" id="fileUpload" style="visibility: hidden;" (change)="filesSelected($event)" multiple="true">
+</div>

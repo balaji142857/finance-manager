@@ -1,0 +1,75 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Oswald", sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+mat-icon {
+  cursor: pointer;
+}
+
+tr th button{
+    text-transform: uppercase;
+}
+
+.mat-snack-bar-container {
+  margin-bottom: 0 !important;
+
+}
+.snackbar_sucess {
+  background-color: #4e8715eb !important;
+}
+.snackbar_error{
+  background-color: crimson !important;
+}
+
+.mat-sort-header-arrow {
+  color: white !important;
+}
+@import '~@angular/material/theming';
+$custom-typography: mat-typography-config($font-family: '"Oswald", sans-serif;');
+@include mat-core($custom-typography);
+
+
+@font-face {
+	font-family: 'Material Icons';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Material Icons'),
+		 local('MaterialIcons-Regular'),
+		 url('assets/iconfont/MaterialIcons-Regular.woff2'),
+		 url('assets/iconfont/MaterialIcons-Regular.woff') format('woff'),
+		 url('assets/iconfont/MaterialIcons-Regular.ttf') format('truetype');
+ }
+
+ .material-icons {
+   font-family: 'Material Icons';
+   font-weight: normal;
+   font-style: normal;
+   font-size: 24px;  /* Preferred icon size */
+   display: inline-block;
+   line-height: 1;
+   text-transform: none;
+   letter-spacing: normal;
+   word-wrap: normal;
+   white-space: nowrap;
+   direction: ltr;
+
+   /* Support for all WebKit browsers. */
+   -webkit-font-smoothing: antialiased;
+   /* Support for Safari and Chrome. */
+   text-rendering: optimizeLegibility;
+
+   /* Support for Firefox. */
+   -moz-osx-font-smoothing: grayscale;
+
+   /* Support for IE. */
+   font-feature-settings: 'liga';
+ }

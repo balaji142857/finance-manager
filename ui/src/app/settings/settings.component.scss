@@ -1,0 +1,20 @@
+@import '~@angular/material/theming';
+@import '../../assets/styles/page_card';
+@import '../../assets/styles/table';
+@include mat-core();
+
+
+$primary: mat-palette($mat-indigo, 600, 500, 900);
+$accent: mat-palette($mat-amber, A400, A300, A600);
+
+
+.chip-edit-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  opacity: .4;
+}
+
+mat-expansion-panel {
+  margin: 20px 0;
+}

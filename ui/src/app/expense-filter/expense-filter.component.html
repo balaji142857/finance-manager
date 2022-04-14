@@ -1,0 +1,81 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Filter Exppenses
+    </mat-panel-title>
+    </mat-expansion-panel-header>
+<div class="filter-wrapper">
+  <form #filterForm="ngForm">
+  <div class="f-row">
+    <mat-form-field class="flex-30">
+      <mat-label>Asset</mat-label>
+      <mat-select [(ngModel)]="filterObj.asset" multiple name="asset" [disabled]="filedsToDisable.asset">
+        <mat-option *ngFor="let asset of assets" [value]="asset.id">{{asset.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="flex-30">
+      <mat-label>Category</mat-label>
+      <mat-select [(ngModel)]="filterObj.category" multiple name="category" [disabled]="filedsToDisable.category">
+        <mat-option *ngFor="let cat of categories" [value]="cat.id">{{cat.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="flex-30">
+      <mat-label>SubCategory</mat-label>
+      <mat-select [(ngModel)]="filterObj.subCategory" multiple name="subCategory"
+      [disabled]="filedsToDisable.subCategory">
+      <mat-optgroup *ngFor="let catGroup of filterObj.category" [label]="util.getObjectByProperty(categories,'id', catGroup).name">
+        <mat-option *ngFor="let subCat of util.getObjectByProperty(categories,'id', catGroup).subCategories" [value]="subCat.id">{{subCat.name}}</mat-option>
+      </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="f-row">
+    <mat-form-field>
+      <mat-label>Transaction From date</mat-label>
+      <input matInput [matDatepicker]="fromPicker" [(ngModel)]="filterObj.fromDate"
+        name="fromDate" [disabled]="filedsToDisable.fromDate">
+      <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+      <mat-datepicker #fromPicker color="primary"></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Transaction To date</mat-label>
+      <input matInput [matDatepicker]="toPicker" [(ngModel)]="filterObj.toDate"
+        name="toDate" [disabled]="filedsToDisable.toDate">
+      <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+      <mat-datepicker #toPicker color="primary"></mat-datepicker>
+    </mat-form-field>
+  </div>
+  <div class="f-row" *ngIf="!filedsToDisable.minAmount || !filedsToDisable.maxAmount">
+    <!-- <mat-number-input [(ngModel)]="filterObj.minAmount"></mat-number-input> -->
+    <mat-form-field>
+      <input matInput type="number" placeholder="Expense minimum amount"
+        [(ngModel)]="filterObj.minAmount" name="minAmount" [disabled]="filedsToDisable.minAmount">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Expense maximum amount"
+        [(ngModel)]="filterObj.maxAmount" name="maxAmount" [disabled]="filedsToDisable.maxAmount">
+    </mat-form-field>
+  </div>
+  <div class="f-row" *ngIf="!filedsToDisable.txDetail || !filedsToDisable.comment">
+    <mat-form-field>
+      <input matInput type="text" placeholder="Transaction detail"
+        [(ngModel)]="filterObj.txDetail" name="txDetail" [disabled]="filedsToDisable.txDetail">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="text" placeholder="comment"
+        [(ngModel)]="filterObj.comment" name="comment" [disabled]="filedsToDisable.comment">
+    </mat-form-field>
+  </div>
+  <div class="f-row">
+    <div class="left">
+        {{ resultCount }} results
+    </div>
+    <div class="right">
+      <button mat-raised-button (click)="applyFilter()">APPLY</button>
+      <button mat-raised-button (click)="resetFilter()">RESET</button>
+    </div>
+  </div>
+</form>
+</div>
+</mat-expansion-panel>

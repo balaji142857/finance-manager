@@ -1,0 +1,41 @@
+$border_color: blue;
+$label_color: $border_color;
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid $border_color;
+	border-radius: 5px;
+	label.test {
+		text-align: center;
+		color: $label_color;
+		border-bottom: 1px solid $border_color;
+	}
+	.added_files {
+		height: 200px;
+		overflow-y: auto;
+		.files{
+			display: flex;
+			align-items: center;
+			.name {
+				flex-basis: 45%;
+			}
+			.size {
+				flex-basis: 10%;
+			}
+			.comment  {
+				flex-basis: 40%
+			}
+			.action {
+				flex-basis: 5%;
+				.download {
+					color: aquamarine;
+				}
+				.danger{
+					color: red; 
+				}
+			}
+		}
+	}
+}
+
+

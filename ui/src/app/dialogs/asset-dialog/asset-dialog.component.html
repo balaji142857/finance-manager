@@ -1,0 +1,26 @@
+<div>
+  <form assetForm="#ngForm">
+    <div class="f-row">
+      <mat-form-field>
+        <input matInput name="id" [(ngModel)]="data.asset.id" placeholder="Id" [disabled]="true">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput name="name" [(ngModel)]="data.asset.name" placeholder="Name" required>
+      </mat-form-field>
+    </div>
+    <div class="f-row">
+      <mat-form-field>
+        <input matInput name="usage" [(ngModel)]="data.asset.usage" placeholder="Usage" [disabled]="true">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput name="comment" [(ngModel)]="data.asset.comment" placeholder="Comment">
+      </mat-form-field>
+    </div>
+    <div class="f-row">
+      <button mat-raised-button (click)="cancel()"> CANCEL </button>
+      <button mat-raised-button (click)="confirm()">
+        {{ data.asset.id ? 'CONFIRM' : 'CREATE' }}
+      </button>
+    </div>
+  </form>
+</div>

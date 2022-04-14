@@ -1,0 +1,34 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+
+$primary: mat-palette($mat-indigo, 600, 500, 900);
+$accent: mat-palette($mat-pink, A400, A300, A600);
+
+
+table {
+  width: 100%;
+}
+tr.header-row {
+  background-color: mat-color($primary);
+  th {
+    color: white;
+    border-bottom: 3px solid mat-color($accent);
+  }
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+}

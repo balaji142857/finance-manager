@@ -1,0 +1,40 @@
+<div class="wrapper">
+  <mat-card class="card-wrapper mat-elevation-z5">
+    <div class="header">
+      <div class="header-text">
+          <mat-icon class="example-header-image">assessment</mat-icon>
+          <div class="title_wrapper">
+            <div class="title">Dashboard</div>
+            <div class="subtitle">Expense & Asset usage</div>
+          </div>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-card-content class="chart-content-wrapper">
+      <div>
+        <app-expense-filter
+          [assets]="assets"
+          [categories]="categories"
+          [filedsToDisable]="filedsToDisable"
+          (apply)="retrieveChartData($event)">
+        </app-expense-filter>
+      </div>
+      <div class="chart-row">
+        <div class="chart-section">
+          <app-chart [data]="assetChartData" [userConfig]="doughnutChartConfig"></app-chart>
+        </div>
+        <div class="chart-section">
+          <app-chart [data]="categoryExpenseData" [userConfig]="barChartConfig"></app-chart>
+        </div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-section">
+          <app-chart [data]="dailyExpenseData" [userConfig]="lineChartConfig"></app-chart>
+        </div>
+        <div class="chart-section">
+          <app-chart [data]="monthlyExpenseData" [userConfig]="lineChartConfig"></app-chart>
+        </div>
+      </div>
+</mat-card-content>
+</mat-card>
+</div>

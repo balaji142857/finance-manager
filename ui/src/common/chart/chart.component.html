@@ -1,0 +1,14 @@
+<mat-card  class="chart-card mat-elevation-z4">
+  <mat-card-content>
+    <div class="chart-wrapper">
+      <canvas baseChart
+      [datasets]="chartData"
+      [labels]="chartLabels"
+      [options]="chartOptions"
+      [plugins]="chartPlugins"
+      [legend]="chartLegend"
+      [chartType]="chartType">
+    </canvas>
+  </div>
+  </mat-card-content>
+</mat-card>

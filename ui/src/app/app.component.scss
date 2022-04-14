@@ -1,0 +1,73 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+
+$primary: mat-palette($mat-indigo, 600, 500, 900);
+$accent: mat-palette($mat-pink, A400, A300, A600);
+
+mat-drawer {
+  background-color: lighten(mat-color($accent),25%);
+  border: none;
+}
+
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;;
+}
+mat-toolbar {
+  box-shadow: 0px 5px 5px -3px black, 0px 8px 10px 1px black, 0px 3px 14px 2px black !important;
+}
+.example-icon {
+  padding: 0 14px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+
+
+
+.example-container {
+  flex-grow: 1;
+}
+
+.example-sidenav-content {
+  // display: flex;
+  height: 100%;
+  // align-items: center;
+  // justify-content: center;
+  padding: 30px;
+}
+
+.example-sidenav {
+  padding: 20px;
+}
+
+
+
+
+.footer {
+  display: flex;
+  align-items: center;
+  color: white;
+  height: 3%;
+  background-color: mat-color($primary);
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: bold;
+  .connected-user { flex-basis: 15%;}
+}
+
+
+
+.left_portion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+
