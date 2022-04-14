@@ -4,7 +4,7 @@ services:
   backend:
     image: 'balaji142857/finman:latest'
     build:
-      context: ..
+      context: ""
     container_name: finman
     depends_on:
       - db
