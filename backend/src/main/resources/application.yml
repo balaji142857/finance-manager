@@ -4,8 +4,7 @@ spring:
   application:
     name: finance-manager
   datasource:
-    url: "jdbc:postgresql://localhost:5432/finman-db"
-#    url: "jdbc:postgresql://localhost:5432/user-mgmt"
+    url: "jdbc:postgresql://db:localhost:5432/finman-db"
     username: postgres
     password: password
     platform: postgres

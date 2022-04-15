@@ -1,24 +1,42 @@
-version: '2'
+version: '3.7'
 
 services:
   backend:
-    image: 'balaji142857/finman:latest'
-    build:
-      context: ""
+    image: 'balaji142857/finman:1.0'
     container_name: finman
+    build:
+      context: ./backend
+      args:
+        JAR_FILE: build/libs/finance-manager-1.0-SNAPSHOT.jar
+    networks:
+      - finman-network
+    ports:
+      - '8080:8980'
+    expose:
+      - '8980'
     depends_on:
       - db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
-      - SPRING_DATASOURCE_USERNAME=compose-postgres
-      - SPRING_DATASOURCE_PASSWORD=compose-postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-
   db:
-    image: 'postgres:13.1-alpine'
+    image: 'balaji142857/finman-db:1.0'
     container_name: finman-db
-    environment:
-      - POSTGRES_USER=compose-postgres
-      - POSTGRES_PASSWORD=compose-postgres
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    build:
+      context: ./db
+    ports:
+      - '5432:5432'
+    expose:
+      - '5432'
+    networks:
+      - finman-network
+  ui:
+    image: 'balaji142857/finman-web:1.0'
+    container_name: finman-web
+    build:
+      context: ./ui
+    networks:
+      - finman-network
+    ports:
+      - '4200:80'
+    expose:
+      - '80'
+networks:
+  finman-network: {}
