@@ -15,5 +15,5 @@ docker build -t balaji142857/finman-web:1.0 ui/
 ##Running the app
 ```
 docker run -d -p 8080:8080 balaji142857/finman:1.0
-docker run -d -p 80:4200 balaji142857/finman-web
+docker run -d -p 4200:80 balaji142857/finman-web:1.0
 ```
