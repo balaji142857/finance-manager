@@ -16,6 +16,10 @@ services:
       - '8980'
     depends_on:
       - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/finman-db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
   db:
     image: 'balaji142857/finman-db:1.0'
     container_name: finman-db

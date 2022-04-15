@@ -4,9 +4,9 @@ spring:
   application:
     name: finance-manager
   datasource:
-    url: "jdbc:postgresql://db:localhost:5432/finman-db"
-    username: postgres
-    password: password
+#    url: "jdbc:postgresql://localhost:5432/finman-db"
+#    username: postgres
+#    password: password
     platform: postgres
   jpa:
     properties:
@@ -45,3 +45,13 @@ bulk-imports:
       comment:
         columnIndex: 5
         columnName: "Comments"
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
