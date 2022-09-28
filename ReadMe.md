@@ -6,7 +6,7 @@
     - start: ```docker-compose up --build```
     - stop: ```docker-compose stop```
 - The start internally does the below for you
-    - brings up the [user interface](http://localhost:80) component
+    - brings up the [user interface](http://localhost:420420420420component
     - starts the postgres database on port 5432
     - starts the backend component on port 80
 
