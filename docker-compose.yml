@@ -35,7 +35,7 @@ services:
       - finman-network
     volumes:
 # replace the first part to a location in your machine - database will use this location to store data
-      - /home/geek/docker_mounts/finman_test:/var/lib/postgresql/data
+      - ~/docker_mounts/finman_test:/var/lib/postgresql/data
       - ./db/db_setup.sql:/docker-entrypoint-initdb.d/initData.sql
   ui:
     image: 'balaji142857/finman-web:1.0'
