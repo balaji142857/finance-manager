@@ -7,21 +7,13 @@ import static com.kb.fm.util.DateUtil.convertToDate;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -102,9 +94,11 @@ public class ImportServivceImpl implements ImportService {
 		}
 		expService.addExpenseEntities(expenses);
 	}
-	
+
+	//importing from bank statement & app export/import  should be different
 	private List<ExpenseModel> loadExpenses(MultipartFile[] uploadedFiles) throws FinanceManagerException, ParseException {
 		//TODO:BALAJI -- derive from request
+		//row 13
 		String bankFormat = "ICICI";
 		if (uploadedFiles == null || uploadedFiles.length == 0) {
 			return Collections.emptyList();
@@ -115,9 +109,12 @@ public class ImportServivceImpl implements ImportService {
 			Sheet sheet = wb.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.rowIterator();
 			int rowIndex = 0;
+			//TODO wrong label location
+			outerLoop:
 			while (rowIterator.hasNext()) {
+				log.info("staring to process row: {}", rowIndex+1);
 				Row row = rowIterator.next();
-				if (rowIndex == 0) {
+				if (rowIndex < 14) {//TODO this should be from config
 					rowIndex++;
 					continue;
 				}
@@ -125,8 +122,35 @@ public class ImportServivceImpl implements ImportService {
 				Asset asset = assetService.getAsset(bankFormat);
 				e.setAsset(null != asset ? asset.getId() : null);
 				e.setBankFormat(bankFormat);
-				for(Entry<String, ColumnModel> s : importFormat.entrySet()) {
+				Set<Entry<String, ColumnModel>> keys = importFormat.entrySet();
+				Set<String> ignore= Set.of("serial","transactionDetail");
+				var iciciRowOverflowValidationColumns = keys.stream()
+						.filter(ent -> !ignore.contains(ent.getKey()))
+						.map(ent -> ent.getValue().getColumnIndex())
+						.collect(Collectors.toList());
+				for(Entry<String, ColumnModel> s : sort(importFormat.entrySet())) {
+					log.info("key: {}, colIndex: {}, val: {}", s.getKey(), s.getValue().getColumnIndex(), row.getCell(s.getValue().getColumnIndex()).getStringCellValue());
 					switch (s.getKey()) {
+						case "serial":
+							Double sno = null;
+							try{
+								sno = getDoubleValue(row.getCell(s.getValue().getColumnIndex()));
+							} catch(NumberFormatException nfe) {
+								log.info("Invalid value present in serial number field. ");
+								log.warn("There is an issue with ICICI exports where transaction remarks overflows" +
+										" to the next row and other cells are blank. Validating if that's the case here");
+								ColumnModel transDetailCol = importFormat.get("transactionDetail");
+								if (isAllBlank(row, iciciRowOverflowValidationColumns)
+										&& !isBlank(row, transDetailCol.getColumnIndex())) {
+
+									expenses.get(expenses.size() -1).setTransactionDetail(expenses.get(expenses.size() -1).getTransactionDetail() + getStringValue(row.getCell(transDetailCol.getColumnIndex())));
+									log.info("Indeed an issue with the bank statement. Appened the transaction detail with previous record");
+									rowIndex++;
+									break outerLoop;
+								}
+							}
+							log.info("serial number is: {}", sno);
+							break;
 						case "date":
 							e.setTransactionDate(convertDateToDatePickerFormat(convertToDate(row.getCell(s.getValue().getColumnIndex()).getStringCellValue(), s.getValue().getColumnFormat())));
 							break;
@@ -135,7 +159,7 @@ public class ImportServivceImpl implements ImportService {
 							break;
 						case "amount":
 							BigDecimal amount = BigDecimal.valueOf(getDoubleValue(row.getCell(s.getValue().getColumnIndex())));											
-							e.setAmount(null != amount ? amount.doubleValue() : 0);
+							e.setAmount(amount.doubleValue());
 							break;
 						case "category":
 							String cat = getStringValue(row.getCell(s.getValue().getColumnIndex()));
@@ -158,12 +182,35 @@ public class ImportServivceImpl implements ImportService {
 			}
 			return expenses;
 		} catch (EncryptedDocumentException | InvalidFormatException | IOException e) {
-			log.error("Error occured while parsing the expenses file", e);
-			// TODO:BALAJI pass some useful info to client as what caused the failure
+			log.error("Error occurred while parsing the expenses file", e);
+			// TODO:BALAJI pass some meaningful response back as to what caused the failure
 			throw new FinanceManagerException("File import failed");
 		}
 	}
-	
+
+	void getIciciColumnValue(String colIdentifier) {}
+
+	private Iterable<? extends Entry<String, ColumnModel>> sort(Set<Entry<String, ColumnModel>> entrySet) {
+		var list = new ArrayList<>(entrySet);
+		list.sort(Entry.comparingByValue(Comparator.comparing(ColumnModel::getReadOrder, Comparator.nullsLast(Comparator.naturalOrder()))));
+		return list;
+	}
+
+
+	private boolean isAllBlank(Row row, List<Integer> iciciRowOverflowValidationColumns) {
+		if(CollectionUtils.isEmpty(iciciRowOverflowValidationColumns)) {
+			return true;
+		}
+		return iciciRowOverflowValidationColumns
+				.stream()
+				.allMatch(item -> isBlank(row,item));
+	}
+
+	private boolean isBlank(Row row, int colIndex) {
+		Cell cell = row.getCell(colIndex);
+		return Objects.isNull(cell) || !StringUtils.hasText(row.getCell(colIndex).getStringCellValue());
+	}
+
 	//TODO:BALAJI nice starting point, but needs lots of improvement
 	/**
 	 * 1. loads everything from DB on every import call!!!!!
@@ -219,8 +266,19 @@ public class ImportServivceImpl implements ImportService {
 		return null != cell ? cell.getStringCellValue() : null;
 	}
 
-	private static double getDoubleValue(Cell cell) {
-		return null != cell ? cell.getNumericCellValue() : null;
+	//the whole point of using a big decimal is lost if we first try to get this a double from string value
+	private static Double getDoubleValue(Cell cell) {
+		if (Objects.isNull(cell)) {
+			return null;
+		}
+		CellType type = cell.getCellTypeEnum();
+		if (type.equals(CellType.BLANK)) {
+			throw new NumberFormatException("Empty content, cannot convert to a double value");
+		}
+		if (type.equals(CellType.STRING)) {
+				return Double.parseDouble(cell.getStringCellValue());
+		}
+		return cell.getNumericCellValue();
 	}
 
 }

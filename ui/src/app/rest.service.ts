@@ -55,6 +55,10 @@ export class RestService {
     return this.http.post(this.basePath+'expenses/',[exp]);
   }
 
+  saveImportVerifiedExpenses(expenses) {
+    return this.http.post(this.basePath+'expenses/import/save',expenses)
+  }
+
   deleteExpense(expId: number) {
     return this.http.post(this.basePath+'expenses/delete/'+expId, null);
   }

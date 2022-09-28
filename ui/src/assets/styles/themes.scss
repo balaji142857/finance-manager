@@ -1,9 +1,37 @@
 @import '~@angular/material/theming';
 @include mat-core();
 
-$my-app-primary: mat-palette($mat-indigo);
-$my-app-accent:  mat-palette($mat-pink, 500, 900, A100);
+$my-app-primary: mat-palette($mat-teal);
+$my-app-accent:  mat-palette($mat-grey, 400, 900, A100);
 $my-app-warn:    mat-palette($mat-deep-orange);
+$my-app-theme: mat-dark-theme($my-app-primary, $my-app-accent, $my-app-warn);
 
-$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
+mat-drawer {
+    background-color: inherit !important;
+}
+
 @include angular-material-theme($my-app-theme);
+
+
+table {
+    width: 100%;
+  }
+  tr.header-row {
+    background-color: mat-color($my-app-primary);
+    th {
+      color: w;
+      border-bottom: 3px solid mat-color($my-app-accent);
+    }
+  }
+  
+  
+  tr.example-element-row:not(.example-expanded-row):hover {
+    background: rgb(17, 29, 29) !important;
+    cursor: pointer;
+  }
+  
+  tr.example-element-row:not(.example-expanded-row):active {
+    background: rgb(17, 29, 29);
+  }
+  
+  

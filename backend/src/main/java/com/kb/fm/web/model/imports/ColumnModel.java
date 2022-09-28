@@ -8,5 +8,6 @@ public class ColumnModel {
 	private String columnName;
 	private Integer columnIndex;
 	private String columnFormat;
+	private Integer readOrder;
 
 }

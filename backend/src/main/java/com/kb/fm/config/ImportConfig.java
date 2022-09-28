@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 //TODO: move to db
-@ConfigurationProperties(prefix="bulk-imports",ignoreInvalidFields = false, ignoreUnknownFields = false)
+@ConfigurationProperties(prefix="bulk-imports", ignoreUnknownFields = false)
 @Getter
 @Setter
 @RequiredArgsConstructor

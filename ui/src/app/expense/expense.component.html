@@ -73,8 +73,8 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>  </th>
       <td mat-cell *matCellDef="let element">
-        <mat-icon (click)="openExpense(element, $event)">edit</mat-icon>
-        <mat-icon (click)="deleteExpense(element, $event)">delete</mat-icon>
+        <mat-icon color="primary" (click)="openExpense(element, $event)">edit</mat-icon>
+        <mat-icon color="warn" (click)="deleteExpense(element, $event)">delete</mat-icon>
       </td>
       <td mat-footer-cell *matFooterCellDef>  </td>
     </ng-container>

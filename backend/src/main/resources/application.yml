@@ -25,33 +25,30 @@ app:
   allowedOrigins: "*"
 bulk-imports:
   import-formats: 
-    ICICI:   
+    ICICI:
+      serial:
+        columnIndex: 1
+        columnName: "serial"
+        readOrder: 1
       date:
-        columnIndex: 0
+        columnIndex: 2
         columnFormat: "dd/MM/yyyy"
         columnName: "Transaction Date"
       transactionDetail:
-        columnIndex: 1
+        columnIndex: 5
         columnName: "Transaction Remarks"
       amount:
-        columnIndex: 2
+        columnIndex: 6
         columnName: "Withdrawal Amount (INR )"
-      category:
-        columnIndex: 3
-        columnName: "Category"
-      subCategory:
-        columnIndex: 4
-        columnName: "Sub Category"  
-      comment:
-        columnIndex: 5
-        columnName: "Comments"
-management:
-  endpoint:
-    metrics:
-      enabled: true
-    prometheus:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*"
+      creditAmount:
+        columnIndex: 7
+        columnName: "credit amount"
+#      category:
+#        columnIndex: 3
+#        columnName: "Category"
+#      subCategory:
+#        columnIndex: 4
+#        columnName: "Sub Category"
+#      comment:
+#        columnIndex: 5
+#        columnName: "Comments"

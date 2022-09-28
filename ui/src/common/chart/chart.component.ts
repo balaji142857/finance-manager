@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { ChartDataSets, ChartOptions, ChartType  } from 'chart.js';
+import { ChartDataSets, ChartOptions, ChartType, Chart  } from 'chart.js';
 import { Color, Label, MultiDataSet} from 'ng2-charts';
 import { ChartDataModel } from 'src/app/models/chart-data.model';
 import { ChartConfigModel } from 'src/app/models/chart-config.model';
@@ -67,3 +67,23 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
 }
+// import * as pluginColorSchemes from 'chartjs-plugin-colorschemes';
+// <canvas id="myChart">{{ myChart }}</canvas>
+// public chart: any;
+// Chart.defaults.global.plugins.colorschemes = {
+//   scheme: 'brewer.YlGn3',
+// }
+// this.chart = new Chart("myChart", {
+//   type: this.chartType,
+//   data: {
+//       labels: this.chartLabels,
+//       datasets: this.chartData
+//   },
+//   options: {
+//       plugins: {
+//           colorschemes: {
+//               scheme: 'brewer.YlGn3'
+//           }
+//       }
+//   }
+// });

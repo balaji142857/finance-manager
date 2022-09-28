@@ -6,6 +6,7 @@ import java.util.ListIterator;
 
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -34,6 +35,7 @@ import com.kb.fm.web.model.SearchResponseModel;
 
 @RestController
 @RequestMapping("/expenses")
+@Slf4j
 public class ExpenseController {
 	
 	@Autowired
@@ -64,6 +66,14 @@ public class ExpenseController {
 	public GenericResponse<List<ExpenseModel>> onboard(@RequestParam("files") MultipartFile[] uploadedFiles) throws FinanceManagerException {
 //		impService.importExpenses(uploadedFiles);
 		return impService.loadExpensesFromFile(uploadedFiles);
+	}
+
+	@PostMapping("/import/save")
+	public GenericResponse<List<ExpenseModel>> importExpenses(@RequestBody List<ExpenseModel> expenseList) throws FinanceManagerException {
+//		impService.importExpenses(uploadedFiles);
+		log.info("received requewst {}", expenseList);
+		service.addExpenses(expenseList);
+		return null;
 	}
 	
 	@PostMapping("/filter")

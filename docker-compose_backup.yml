@@ -21,12 +21,15 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
   db:
-    image: 'postgres:11-alpine'
-    container_name: finman-db    
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: finman-db
+    image: 'balaji142857/finman-db:1.0'
+    container_name: finman-db
+    build:
+      context: ./db
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: password
+#      POSTGRES_DB: finman-db
+#      PGDATA: /data
     ports:
       - '5432:5432'
     expose:
@@ -34,9 +37,7 @@ services:
     networks:
       - finman-network
     volumes:
-# replace the first part to a location in your machine - database will use this location to store data
       - /home/geek/docker_mounts/finman_test:/var/lib/postgresql/data
-      - ./db/db_setup.sql:/docker-entrypoint-initdb.d/initData.sql
   ui:
     image: 'balaji142857/finman-web:1.0'
     container_name: finman-web

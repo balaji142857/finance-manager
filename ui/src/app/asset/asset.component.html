@@ -23,41 +23,19 @@
       <ng-template #actionBlock>
         <td mat-cell *matCellDef="let element" (click)="suppressEvent($event)">
           <div>
-            <mat-icon (click)="editAsset(element, $event)">edit</mat-icon>
-            <mat-icon (click)="deleteAsset(element)">delete</mat-icon>
+            <mat-icon color="primary" (click)="editAsset(element, $event)">edit</mat-icon>
+            <mat-icon color="warn" (click)="deleteAsset(element)">delete</mat-icon>
           </div>
         </td>
       </ng-template>
     </ng-container>
 
-    <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-    <ng-container matColumnDef="expandedDetail">
-      <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
-        <div class="example-element-detail"
-            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          <div class="example-element-diagram">
-
-            <div class="example-element-position"> {{element.id}} </div>
-            <div class="example-element-symbol"> {{element.name}} </div>
-            <div class="example-element-name"> {{element.balance | number }} </div>
-            <div class="example-element-weight"> {{element.comment}} </div>
-
-          </div>
-          <div class="example-element-description">
-            {{element.description}}
-            <span class="example-element-description-attribution"> -- Wikipedia </span>
-          </div>
-        </div>
-      </td>
-    </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay" class="header-row"></tr>
 
     <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
         class="example-element-row"
-        [class.example-expanded-row]="expandedElement === element"
-        (click)="expandedElement = expandedElement === element ? null : element">
-    </tr>
-    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+        [class.example-expanded-row]="expandedElement === element">
+    </tr>   
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
   </mat-card-content>

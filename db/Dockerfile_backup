@@ -1,0 +1,21 @@
+# dump build stage
+FROM postgres:14.2-alpine3.15 as dumper
+COPY db_setup.sql /docker-entrypoint-initdb.d/
+RUN ["sed", "-i", "s/exec \"$@\"/echo \"skipping...\"/", "/usr/local/bin/docker-entrypoint.sh"]
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=password
+ENV POSTGRES_DB finman-db
+ENV PGDATA=/data
+RUN ["/usr/local/bin/docker-entrypoint.sh", "postgres"]
+
+# final build stage
+FROM postgres:14.2-alpine3.15
+COPY --from=dumper /data $PGDATA
+
+# existing piece of code
+
+#FROM postgres:14.2-alpine3.15
+#ENV POSTGRES_USER postgres
+#ENV POSTGRES_PASSWORD password
+#ENV POSTGRES_DB finman-db
+#ADD db_setup.sql /docker-entrypoint-initdb.d/

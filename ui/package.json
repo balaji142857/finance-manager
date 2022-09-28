@@ -25,6 +25,7 @@
     "angular-fusioncharts": "^3.0.4",
     "busy-spinner": "0.0.1",
     "chart.js": "^2.9.3",
+    "chartjs-plugin-colorschemes": "^0.4.0",
     "file-saver": "^2.0.2",
     "fusioncharts": "^3.15.2",
     "mat-number-input": "0.0.3",

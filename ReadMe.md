@@ -1,3 +1,16 @@
+# Docker based installation
+
+- Install [Docker](https://docs.docker.com/get-docker/) for your operating system
+- Clone/Download the project from [github repo](https://github.com/balaji142857/finance-manager)
+- From the root project directory execute the below commands to start/stop the app
+    - start: ```docker-compose up --build```
+    - stop: ```docker-compose stop```
+- The start internally does the below for you
+    - brings up the [user interface](http://localhost:80) component
+    - starts the postgres database on port 5432
+    - starts the backend component on port 80
+
+
 #Container creations
 
 ##building the images

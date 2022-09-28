@@ -1,0 +1,20 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/finman-db"
+    username: postgres
+    password: password
+    platform: postgres
+app:
+  allowedOrigins: "*"
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
