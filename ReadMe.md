@@ -40,4 +40,3 @@ docker run -d -p 4200:80 balaji142857/finman-web:1.0
 
 docker exec -it postgres-docker-db psql -U postgres
 ```
-
