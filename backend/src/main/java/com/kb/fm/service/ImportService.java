@@ -2,6 +2,7 @@ package com.kb.fm.service;
 
 import java.util.List;
 
+import com.kb.fm.exceptions.BankStatementImportException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kb.fm.exceptions.FinanceManagerException;
@@ -12,7 +13,7 @@ public interface ImportService {
 
 	void configureApplication();
 
-	GenericResponse<List<ExpenseModel>> loadExpensesFromFile(MultipartFile[] uploadedFiles) throws FinanceManagerException;
+	GenericResponse<List<ExpenseModel>> loadExpensesFromFile(MultipartFile[] uploadedFiles) throws BankStatementImportException;
 
 	void importExpenses(List<ExpenseModel> expenseList);
 
