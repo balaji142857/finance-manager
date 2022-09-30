@@ -6,6 +6,7 @@ import java.util.ListIterator;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.kb.fm.exceptions.BankStatementImportException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -63,8 +64,7 @@ public class ExpenseController {
 	}
 	
 	@PostMapping("/import")
-	public GenericResponse<List<ExpenseModel>> onboard(@RequestParam("files") MultipartFile[] uploadedFiles) throws FinanceManagerException {
-//		impService.importExpenses(uploadedFiles);
+	public GenericResponse<List<ExpenseModel>> onboard(@RequestParam("files") MultipartFile[] uploadedFiles) throws BankStatementImportException {
 		return impService.loadExpensesFromFile(uploadedFiles);
 	}
 

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.kb.fm.exceptions.DateFormatException;
 import org.springframework.util.CollectionUtils;
 
 import lombok.experimental.UtilityClass;
@@ -35,8 +36,12 @@ public class DateUtil {
 		return convertToDate(input, defaultExcelInputForamts);
 	}
 	
-	public static Date convertToDate(String input, String format) throws ParseException {
-		return new SimpleDateFormat(format).parse(input);
+	public static Date convertToDate(String input, String format) throws DateFormatException {
+		try {
+			return new SimpleDateFormat(format).parse(input);
+		} catch (ParseException e) {
+			throw new DateFormatException("Could not parse the input: " + input +" with format: " + format, e);
+		}
 	}
 
 	public static Date convertToDate(String input, List<String> acceptedFormats) {
