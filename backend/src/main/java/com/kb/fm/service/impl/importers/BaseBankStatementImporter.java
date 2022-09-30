@@ -16,13 +16,13 @@ import java.util.*;
 public abstract class BaseBankStatementImporter implements BankStatementImporter {
 
     @Override
-    public List<ExpenseModel> importBankStatement(MultipartFile uploadedFiles) throws BankStatementImportException {
+    public List<ExpenseModel> importBankStatement(MultipartFile file) throws BankStatementImportException {
         try {
-            return importStatement(uploadedFiles);
+            return importStatement(file);
         } catch(BankStatementImportException e) {
             throw e;
         } catch(Exception e) {
-            throw new BankStatementImportException("Error occurred while importing bank statement", e);
+            throw new BankStatementImportException(file.getName(), "Error occurred while importing bank statement", e);
         }
     }
 
