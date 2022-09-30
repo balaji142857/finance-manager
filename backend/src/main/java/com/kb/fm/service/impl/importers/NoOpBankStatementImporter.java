@@ -9,8 +9,8 @@ import java.util.List;
 public class NoOpBankStatementImporter extends BaseBankStatementImporter {
 
     @Override
-    List<ExpenseModel> importStatement(MultipartFile files) throws BankStatementImportException {
-        throw new BankStatementImportException("No importer registered to process the statements of this bank");
+    List<ExpenseModel> importStatement(MultipartFile file) throws BankStatementImportException {
+        throw new BankStatementImportException(file.getName(), "No importer registered to process the statements of this bank");
     }
 
     @Override

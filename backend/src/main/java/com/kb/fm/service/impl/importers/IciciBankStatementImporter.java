@@ -42,6 +42,7 @@ public class IciciBankStatementImporter extends BaseBankStatementImporter {
 
     @Override
     public List<ExpenseModel> importStatement(MultipartFile uploadedFiles) throws BankStatementImportException {
+        String fileName = uploadedFiles.getName();
         if (null == uploadedFiles) {
             return Collections.emptyList();
         }
@@ -125,13 +126,13 @@ public class IciciBankStatementImporter extends BaseBankStatementImporter {
             }
             return expenses;
         } catch (EncryptedDocumentException e) {
-            throw new BankStatementImportException("Please upload an unencrypted/non password protected file", e);
+            throw new BankStatementImportException(fileName, "Please upload an unencrypted/non password protected file", e);
         }  catch( IOException e) {
-            throw new BankStatementImportException("Unable to read the bank statement", e);
+            throw new BankStatementImportException(fileName, "Unable to read the bank statement", e);
         } catch (InvalidFormatException e) {
-            throw new BankStatementImportException("Ensure the file is indeed an excel file (not just extension)", e);
+            throw new BankStatementImportException(fileName, "Ensure the file is indeed an excel file (not just extension)", e);
         } catch (DateFormatException e) {
-            throw new BankStatementImportException("Error occurred while reading date from the bank statement", e);
+            throw new BankStatementImportException(fileName, "Error occurred while reading date from the bank statement", e);
         }
     }
 

@@ -38,25 +38,25 @@ public class ImportServiceImpl implements ImportService {
 	private final ExpenseService expService;
 	private final BankStatementImportHelper importHelper;
 
-	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void configureApplication() { }
-
-
-	@Override
-	public GenericResponse<List<ExpenseModel>> loadExpensesFromFile(MultipartFile[] uploadedFiles) throws BankStatementImportException {
-		//TODO BALAJI -- deduce the bank name from the uploaded file
-		List<ExpenseModel> expenseList = new ArrayList<>();
-		try {
-			for(MultipartFile file: uploadedFiles) {
-				expenseList.addAll(importHelper.importStatements(file));
-			}
-			return enrichExpenses(expenseList);
-		} catch (BankStatementImportException e) {
-			throw e;
-		} catch(Exception e) {
-			throw new BankStatementImportException("Error occurred while importing the bank statement. Please check the logs", e);
+	public GenericResponse<List<ExpenseModel>> readBankStatements(MultipartFile[] uploadedFiles) throws BankStatementImportException {
+		if (null == uploadedFiles) {
+			return new GenericResponse(Collections.<ExpenseModel>emptyList(), "Nothing to import");
 		}
+		List<ExpenseModel> expenseList = new ArrayList<>();
+		for(MultipartFile file: uploadedFiles) {
+			try {
+			//TODO BALAJI exception handling -- what if one file fails to import and other goes through ??
+			expenseList.addAll(importHelper.importStatements(file));
+			} catch (BankStatementImportException e) {
+				throw e;
+				//TODO need to get this bank to UI - do not block importing of other bank statements
+			} catch(Exception e) {
+				//TODO same exception handling applies here as well
+				throw new BankStatementImportException(file.getName(), "Error occurred while importing the bank statement. Please check the logs", e);
+			}
+		}
+		return enrichExpenses(expenseList);
 	}
 
 	@Override
@@ -135,7 +135,7 @@ public class ImportServiceImpl implements ImportService {
 	private String getEnrichmentMessage(int enrichCount, int overallCount) {
 		//TODO:BALAJI move the messages to constants or atleast yaml
 		String s = "Enriched %d records. Rest %d records have been flagged for review";
-		return enrichCount != 0 ? String.format(s, enrichCount, overallCount - enrichCount) : "No enrichmetns done";
+		return enrichCount != 0 ? String.format(s, enrichCount, overallCount - enrichCount) : "No enrichment done";
 		
 	}
 

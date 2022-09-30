@@ -65,7 +65,7 @@ public class ExpenseController {
 	
 	@PostMapping("/import")
 	public GenericResponse<List<ExpenseModel>> onboard(@RequestParam("files") MultipartFile[] uploadedFiles) throws BankStatementImportException {
-		return impService.loadExpensesFromFile(uploadedFiles);
+		return impService.readBankStatements(uploadedFiles);
 	}
 
 	@PostMapping("/import/save")
