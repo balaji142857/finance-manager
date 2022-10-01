@@ -26,14 +26,15 @@
         <div class="chart-section">
           <app-chart [data]="categoryExpenseData" [userConfig]="barChartConfig"></app-chart>
         </div>
-      </div>
-      <div class="chart-row">
         <div class="chart-section">
           <app-chart [data]="dailyExpenseData" [userConfig]="lineChartConfig"></app-chart>
         </div>
         <div class="chart-section">
           <app-chart [data]="monthlyExpenseData" [userConfig]="lineChartConfig"></app-chart>
         </div>
+      </div>
+      <div class="chart-row">
+
       </div>
 </mat-card-content>
 </mat-card>
