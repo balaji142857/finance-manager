@@ -3,30 +3,36 @@ package com.kb.fm.service.impl.importers;
 import com.kb.fm.exceptions.BankStatementImportException;
 import com.kb.fm.service.BankStatementImporter;
 import com.kb.fm.web.model.ExpenseModel;
+import com.kb.fm.web.model.imports.BankMultipartFileWrapper;
 import com.kb.fm.web.model.imports.ColumnModel;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
+@Slf4j
 public abstract class BaseBankStatementImporter implements BankStatementImporter {
 
     @Override
-    public List<ExpenseModel> importBankStatement(MultipartFile file) throws BankStatementImportException {
+    public List<ExpenseModel> importBankStatement(BankMultipartFileWrapper fileWrapper) throws BankStatementImportException {
         try {
-            return importStatement(file);
+            if (null == fileWrapper.getFile()) {
+                log.warn("Input file {} is null, returning empty response", fileWrapper.getBankName());
+                return Collections.emptyList();
+            }
+            return importStatement(fileWrapper);
         } catch(BankStatementImportException e) {
             throw e;
         } catch(Exception e) {
-            throw new BankStatementImportException(file.getName(), "Error occurred while importing bank statement", e);
+            throw new BankStatementImportException(fileWrapper.getFile().getName(), "Error occurred while importing bank statement", e);
         }
     }
 
-    abstract List<ExpenseModel> importStatement(MultipartFile files) throws BankStatementImportException;
+    abstract List<ExpenseModel> importStatement(BankMultipartFileWrapper files) throws BankStatementImportException;
 
     protected boolean isAllBlank(Row row, List<Integer> columnIndexes) {
         if(CollectionUtils.isEmpty(columnIndexes)) {

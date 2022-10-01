@@ -1,12 +1,14 @@
 package com.kb.fm.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
 import javax.servlet.http.HttpServletResponse;
 
 import com.kb.fm.exceptions.BankStatementImportException;
+import com.kb.fm.web.model.imports.BankMultipartFileWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -64,14 +66,22 @@ public class ExpenseController {
 	}
 	
 	@PostMapping("/import")
-	public GenericResponse<List<ExpenseModel>> onboard(@RequestParam("files") MultipartFile[] uploadedFiles) throws BankStatementImportException {
-		return impService.readBankStatements(uploadedFiles);
+	public GenericResponse<List<ExpenseModel>> onboard(@RequestParam("files") MultipartFile[] uploadedFiles,
+													   @RequestParam("bankNames") List<String> bankNames) throws BankStatementImportException {
+		log.info("Bank statement import request received, bankNames: {}", bankNames);
+		if (bankNames.size() != uploadedFiles.length) {
+			throw new BankStatementImportException("unknown","Bank name not specified all the uploaded files");
+		}
+		List<BankMultipartFileWrapper> files = new ArrayList<>(bankNames.size());
+		for (var i =0; i < bankNames.size(); i++) {
+			files.add(new BankMultipartFileWrapper(bankNames.get(i), uploadedFiles[i]));
+		}
+		return impService.readBankStatements(files);
 	}
 
 	@PostMapping("/import/save")
 	public GenericResponse<List<ExpenseModel>> importExpenses(@RequestBody List<ExpenseModel> expenseList) throws FinanceManagerException {
-//		impService.importExpenses(uploadedFiles);
-		log.info("received requewst {}", expenseList);
+		log.info("received request {}", expenseList);
 		service.addExpenses(expenseList);
 		return null;
 	}
