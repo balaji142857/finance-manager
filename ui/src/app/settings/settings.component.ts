@@ -9,67 +9,71 @@ import { UtilService } from 'src/common/util.service';
 import config from '../../common/config';
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  selector: "app-settings",
+  templateUrl: "./settings.component.html",
+  styleUrls: ["./settings.component.scss"],
 })
 export class SettingsComponent implements OnInit {
-
   categories: CategoryModel[] = [];
 
-  constructor(private dialog: MatDialog,
+  dataSource = [];
+  ELEMENT_DATA = { data: [] };
+  columnsToDisplay = ["category", "subCategory", "actions"];
+
+  constructor(
+    private dialog: MatDialog,
     private service: RestService,
     private util: UtilService,
-    private route: ActivatedRoute) {
-      this.categories = route.snapshot.data['categories'];
+    private route: ActivatedRoute
+  ) {
+    this.categories = route.snapshot.data["categories"];
+    this.ELEMENT_DATA.data = this.categories;
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.dataSource = this.ELEMENT_DATA.data;
   }
 
   loadCategories() {
-    this.service.getExpenseCategories().subscribe(data => {
-      this.categories = data,
-      err => this.util.showError(err,config.messages.catLoadErr)
-    })
+    this.service.getExpenseCategories().subscribe((data) => {
+      (this.categories = data),
+        (err) => this.util.showError(err, config.messages.catLoadErr);
+    });
   }
 
   handleRemove(cat: CategoryModel) {
     const ref = this.dialog.open(GenericDialogComponent, {
       data: {
-        confirmationMessage: 'Delete this Category ? ',
-        confirmText: 'DELETE',
-        cancelText: 'CANCEL'
-      }
+        confirmationMessage: "Delete this Category ? ",
+        confirmText: "DELETE",
+        cancelText: "CANCEL",
+      },
     });
-    ref.afterClosed().subscribe(data => {
-      if (data  && data.confirmed) {
+    ref.afterClosed().subscribe((data) => {
+      if (data && data.confirmed) {
         this.service.deleteCategory(cat.id).subscribe(
-          data=> {
+          (data) => {
             this.util.openSnackBar(config.messages.catDeleted);
             this.loadCategories();
           },
-          err => this.util.showError(err, config.messages.catDelteErr)
-        )
+          (err) => this.util.showError(err, config.messages.catDelteErr)
+        );
       }
-    })
+    });
   }
 
   openCategories(cat: CategoryModel) {
-    const ref= this.dialog.open(CategoryDialogComponent, {
-      width: '100vw',
-      height: '40vh',
+    const ref = this.dialog.open(CategoryDialogComponent, {
+      width: "100vw",
+      height: "40vh",
       data: {
-        category: cat ? JSON.parse(JSON.stringify(cat)) : null
+        category: cat ? JSON.parse(JSON.stringify(cat)) : null,
+      },
+    });
+    ref.afterClosed().subscribe((data) => {
+      if (data && data.isChanged) {
+        this.loadCategories();
       }
-    })
-    ref.afterClosed().subscribe(
-      data => {
-        if (data && data.isChanged) {
-          this.loadCategories();
-        }
-      }
-    )
+    });
   }
-
 }

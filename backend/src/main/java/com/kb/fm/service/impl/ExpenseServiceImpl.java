@@ -187,6 +187,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 		dbEntity.setComment(model.getComment());
 		dbEntity.setAmount(BigDecimal.valueOf(model.getAmount()));
 		dbEntity.setTransactionDate(DateUtil.convert(model.getTransactionDate()));
+		dbEntity.setTransactionDetail(model.getTransactionDetail());
 		Asset asset = assetService.getAsset(model.getAsset());
 		asset.setUsage(null != asset.getUsage() ? asset.getUsage().add(dbEntity.getAmount()) : dbEntity.getAmount());
 		asset.getExpenses().add(dbEntity);

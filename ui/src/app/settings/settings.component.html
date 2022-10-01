@@ -28,14 +28,43 @@
       </mat-expansion-panel-header>
       <div class="category-wrapper">
         <mat-icon (click)="openCategories(null)">add</mat-icon>
-        <mat-chip-list  class="chip-list">
-          <mat-chip *ngFor="let cat of categories"
-          [removable]="true" color="primary" (removed)="handleRemove(cat)">
-            {{ cat.name }}
-            <mat-icon (click)="openCategories(cat)" class="chip-edit-icon">edit</mat-icon>
-            <mat-icon matChipRemove>delete</mat-icon>
-          </mat-chip>
-        </mat-chip-list>
+         <table mat-table matSort [dataSource]="dataSource" multiTemplateDataRows
+        class="expense-table mat-elevation-z2" matSortActive="category" matSortDirection="desc">
+
+
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="category"> Category </th>
+            <td mat-cell *matCellDef="let element">
+              <ng-container *ngIf="element.name"> {{ element.name }} </ng-container>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="subCategory" >
+            <th mat-header-cell *matHeaderCellDef> SubCategory </th>
+            <td mat-cell *matCellDef="let element">
+              <ng-container *ngIf="element.subCategories">
+                <mat-chip-list  class="chip-list">
+                <mat-chip *ngFor="let subCat of element.subCategories" [removable]="false" color="primary">
+                  {{ subCat.name }}
+                  <mat-icon matChipRemove>delete</mat-icon>
+                </mat-chip>
+              </mat-chip-list>
+              </ng-container>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>  </th>
+            <td mat-cell *matCellDef="let element">
+              <mat-icon color="primary" (click)="openCategories(element)">edit</mat-icon>
+              <!-- <mat-icon color="warn" (click)="deleteExpense(element, $event)">delete</mat-icon> -->
+            </td>
+          </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay" class="header-row"></tr>
+        <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"></tr>
+      </table>
       </div>
     </mat-expansion-panel>
 

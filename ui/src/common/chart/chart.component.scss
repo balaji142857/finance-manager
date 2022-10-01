@@ -4,5 +4,9 @@ mat-card.chart-card {
   mat-card-content {
     height: 100%;
     overflow: auto;
+    .chart-wrapper {
+      max-height: 80%;
+      height: 80%;
+    }
   }
 }
