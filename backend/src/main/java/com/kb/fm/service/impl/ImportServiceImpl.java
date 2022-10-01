@@ -8,11 +8,11 @@ import java.util.*;
 
 import com.kb.fm.exceptions.BankStatementImportException;
 import com.kb.fm.service.impl.importers.BankStatementImportHelper;
+import com.kb.fm.web.model.imports.BankMultipartFileWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.kb.fm.entities.Asset;
 import com.kb.fm.entities.CatSubCatIdModel;
@@ -39,21 +39,21 @@ public class ImportServiceImpl implements ImportService {
 	private final BankStatementImportHelper importHelper;
 
 	@Override
-	public GenericResponse<List<ExpenseModel>> readBankStatements(MultipartFile[] uploadedFiles) throws BankStatementImportException {
-		if (null == uploadedFiles) {
-			return new GenericResponse(Collections.<ExpenseModel>emptyList(), "Nothing to import");
+	public GenericResponse<List<ExpenseModel>> readBankStatements(List<BankMultipartFileWrapper> files) throws BankStatementImportException {
+		if (null == files) {
+			return new GenericResponse<>(Collections.<ExpenseModel>emptyList(), "Nothing to import");
 		}
 		List<ExpenseModel> expenseList = new ArrayList<>();
-		for(MultipartFile file: uploadedFiles) {
+		for(BankMultipartFileWrapper fileWrapper: files) {
 			try {
 			//TODO BALAJI exception handling -- what if one file fails to import and other goes through ??
-			expenseList.addAll(importHelper.importStatements(file));
+			expenseList.addAll(importHelper.importStatements(fileWrapper));
 			} catch (BankStatementImportException e) {
 				throw e;
-				//TODO need to get this bank to UI - do not block importing of other bank statements
+				//TODO need to get this err back to UI - do not block importing of other bank statements
 			} catch(Exception e) {
 				//TODO same exception handling applies here as well
-				throw new BankStatementImportException(file.getName(), "Error occurred while importing the bank statement. Please check the logs", e);
+				throw new BankStatementImportException(fileWrapper.getFile().getName(), "Error occurred while importing the bank statement. Please check the logs", e);
 			}
 		}
 		return enrichExpenses(expenseList);

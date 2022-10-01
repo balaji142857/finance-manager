@@ -70,8 +70,10 @@ export class RestService {
   importExpenses(files: FileModel[]) {
       const formData: FormData = new FormData();
       if (files) {
+        let fileTypes = [];
         for (let i = 0; i < files.length; i++) {
           formData.append('files', files[i].content, files[i].name);
+          formData.append('bankNames', files[i].format);
         }
         return this.http.post(this.basePath+'expenses/import',formData);
       }

@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 public class StaticDataController {
 	
 	private final ImportConfig importConfig;
-	
 
 	@GetMapping("import-formats")
 	public Set<String> getAllowedFormats() {
