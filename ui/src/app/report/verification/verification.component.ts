@@ -24,8 +24,7 @@ export class VerificationComponent implements OnInit {
   assets = [];
   categories = [];
   msg;
-  columnsToDisplay = ['asset', 'category', 'amount', 'date','review']; // 'subCategory'
-  // footerColumns = ['subCategory','amount']
+  columnsToDisplay = ['asset', 'category', 'subCategory','amount', 'date','review','actions'];
   ELEMENT_DATA = { data: [] };
   dataSource = [];
   expandedElement: ExpenseModel | null;
@@ -62,6 +61,6 @@ export class VerificationComponent implements OnInit {
     });
     //TODO navigate to the dashboard or expenses page -- show msg in a snackbar
   }
-  
+
 
 }

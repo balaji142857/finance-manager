@@ -56,6 +56,9 @@ public class ImportServiceImpl implements ImportService {
 				throw new BankStatementImportException(fileWrapper.getFile().getName(), "Error occurred while importing the bank statement. Please check the logs", e);
 			}
 		}
+		//TODO save the file used to import to some temp location
+		// if user imported any file - then move the file from temp to actual storage location
+		// scheduled job to cleanup the temp location
 		return enrichExpenses(expenseList);
 	}
 

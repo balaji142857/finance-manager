@@ -1,5 +1,9 @@
-<h3> {{ sharedDataService.expenseImportResponseMessage }} </h3>
-<button mat-raised-button color="primary" (click)="saveExpenses()">Approve</button>
+
+<div style="padding: 0 5%; display: flex; flex-direction: row; justify-content: space-between;">
+  <h3> {{ sharedDataService.expenseImportResponseMessage }} </h3>
+  <button mat-raised-button color="primary" (click)="saveExpenses()">Approve</button>
+</div>
+
 <table mat-table matSort [dataSource]="dataSource" multiTemplateDataRows class="expense-table mat-elevation-z2"
     matSortActive="transactionDate" matSortDirection="desc">
     <ng-container matColumnDef="asset">
@@ -13,30 +17,35 @@
     <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="category"> Category </th>
         <td mat-cell *matCellDef="let element">
-            <ng-container *ngIf="element.category">
-                {{ util.getObjectByProperty(categories, 'id',element.category).name }}
-            </ng-container>
-        </td>        
+           <mat-form-field>
+            <mat-select [(ngModel)]="element.category" [placeholder]="element.category ? '' : 'Category'" name="category">
+              <mat-option *ngFor="let cat of categories" [value]="cat.id">
+                {{ cat.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
     </ng-container>
 
-    <!-- <ng-container matColumnDef="subCategory">
+    <ng-container matColumnDef="subCategory">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="subCategory"> SubCategory </th>
         <td mat-cell *matCellDef="let element">
-            <ng-container
-                *ngIf="element.subCategory
-        && util.getObjectByProperty(categories, 'id',element.category).subCategories
-        && util.getObjectByProperty(util.getObjectByProperty(categories, 'id',element.category).subCategories,'id',element.subCategory)">
-                {{util.getObjectByProperty(util.getObjectByProperty(categories,
-                'id',element.category).subCategories,'id',element.subCategory).name}}
-            </ng-container>
+             <mat-form-field>
+            <mat-select [(ngModel)]="element.subCategory" [placeholder]="element.subCategory ? '' : 'Subcategory'" name="subCategory">
+                <ng-container *ngIf="element.category && util.getObjectByProperty(categories, 'id',element.category).subCategories">
+                    <mat-option *ngFor="let subCat of util.getObjectByProperty(categories, 'id',element.category).subCategories" [value]="subCat.id">
+                        {{ subCat.name }}
+                    </mat-option>
+                </ng-container>
+            </mat-select>
+          </mat-form-field>
         </td>
-        <td mat-footer-cell *matFooterCellDef> Total </td>
-    </ng-container> -->
+    </ng-container>
 
 
     <ng-container matColumnDef="amount">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="amount"> Amount </th>
-        <td mat-cell *matCellDef="let element"> {{element.amount}} </td>        
+        <td mat-cell *matCellDef="let element"> {{element.amount}} </td>
     </ng-container>
 
     <ng-container matColumnDef="date">
@@ -55,14 +64,16 @@
         </td>
     </ng-container>
 
-    <!-- <ng-container matColumnDef="actions">
+    <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> </th>
         <td mat-cell *matCellDef="let element">
-            <mat-icon (click)="openExpense(element, $event)">edit</mat-icon>
-            <mat-icon (click)="deleteExpense(element, $event)">delete</mat-icon>
+          <!-- (click)="openExpense(element, $event)" -->
+            <mat-icon >edit</mat-icon>
+            <!-- (click)="deleteExpense(element, $event)" -->
+            <mat-icon >delete</mat-icon>
         </td>
         <td mat-footer-cell *matFooterCellDef> </td>
-    </ng-container> -->
+    </ng-container>
 
     <ng-container matColumnDef="expandedDetail">
         <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
@@ -81,5 +92,5 @@
         [class.example-expanded-row]="expandedElement === element"
         (click)="expandedElement = expandedElement === element ? null : element">
     </tr>
-    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>    
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 </table>
