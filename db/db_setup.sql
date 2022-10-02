@@ -352,7 +352,7 @@ insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_b
 insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
 	values (nextval('seq_cat_id'),'Home',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- 	values (nextval('seq_subcat_id'), 'Rent', (select id from CATEGORY where name='Home'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);	
+	values (nextval('seq_subcat_id'), 'Property tax', (select id from CATEGORY where name='Vyoma'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);	
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
 	values (nextval('seq_subcat_id'), 'Electricity', (select id from CATEGORY where name='Home'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
@@ -361,8 +361,6 @@ insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_b
  	values (nextval('seq_subcat_id'), 'Water', (select id from CATEGORY where name='Home'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
  	values (nextval('seq_subcat_id'), 'Internet', (select id from CATEGORY where name='Home'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
-insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- 	values (nextval('seq_subcat_id'), 'Maintenance', (select id from CATEGORY where name='Home'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
  	values (nextval('seq_subcat_id'), 'NewsPaper', (select id from CATEGORY where name='Home'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 	 	
 
