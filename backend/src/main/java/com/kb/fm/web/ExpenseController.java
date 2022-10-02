@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.kb.fm.exceptions.BankStatementImportException;
 import com.kb.fm.web.model.imports.BankMultipartFileWrapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -39,13 +40,11 @@ import com.kb.fm.web.model.SearchResponseModel;
 @RestController
 @RequestMapping("/expenses")
 @Slf4j
+@RequiredArgsConstructor
 public class ExpenseController {
 	
-	@Autowired
-	private ExpenseService service;
-	
-	@Autowired
-	private ImportService impService;
+	private final  ExpenseService service;
+	private final ImportService impService;
 
 	@PostMapping
 	public void addExpense(@RequestBody List<ExpenseModel> expenses) {
