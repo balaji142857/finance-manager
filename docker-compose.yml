@@ -17,12 +17,13 @@ services:
     depends_on:
       - db
     volumes:
-      - ../storage/temp:/tmp/storage/temp
-      - ../storage/bankStatements:/tmp/storage/bankStatements
+      - ./storage/temp:/tmp/storage/temp:rw
+      - ./storage/bankStatements:/tmp/storage/bankStatements:rw
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/finman-db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+      - app.fileImport.diskStore.skip=true
   db:
     image: 'postgres:11-alpine'
     container_name: finman-db    
@@ -38,7 +39,7 @@ services:
       - finman-network
     volumes:
 # replace the first part to a location in your machine - database will use this location to store data
-      - ~/docker_mounts/finman_test:/var/lib/postgresql/data
+      - ~/docker_mounts/finman_prod:/var/lib/postgresql/data
       - ./db/db_setup.sql:/docker-entrypoint-initdb.d/initData.sql
   ui:
     image: 'balaji142857/finman-web:1.0'

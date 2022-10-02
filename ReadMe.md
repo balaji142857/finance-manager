@@ -5,11 +5,13 @@
 - From the root project directory execute the below commands to start/stop the app
     - start: ```docker-compose up --build```
     - stop: ```docker-compose stop```
-- The start internally does the below for you
-    - brings up the user interface component on [http://localhost:4200](http://localhost:4200)
+- The start internally does the below for you 
     - starts the postgres database on port 5432
     - starts the backend component on port 80
-
+      - brings up the user interface component on [http://localhost:4200](http://localhost:4200)
+        - Assets: ![Asset](./screenshots/assets.png "Assets")
+        - Settings: ![Settings](./screenshots/settings.png "Settings")
+        - Emtpy Dashboard: ![Settings](./screenshots/dashboard.png "Settings")
 
 ##Development environment setup [WIP]
 

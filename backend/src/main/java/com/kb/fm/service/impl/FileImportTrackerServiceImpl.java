@@ -58,6 +58,7 @@ public class FileImportTrackerServiceImpl implements FileImportTrackerService {
     public void trackVerification(List<Long> fileIds) {
         if (skipDiskStorage) {
             log.warn("Disk storage is disabled, skipping");
+            return;
         }
         List<FileImportMetadata> files = repo.findAllById(fileIds);
         for(var file: files) {

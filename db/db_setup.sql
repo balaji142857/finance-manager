@@ -303,18 +303,22 @@ insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_b
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
  values (nextval('seq_subcat_id'), 'More', (select id from CATEGORY where name='Groceries'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Amazon Fresh', (select id from CATEGORY where name='Groceries'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);    	
+ values (nextval('seq_subcat_id'), 'Amazon Fresh', (select id from CATEGORY where name='Groceries'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Pazhamudir', (select id from CATEGORY where name='Groceries'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 
+ values (nextval('seq_subcat_id'), 'MapleH Naveen', (select id from CATEGORY where name='Groceries'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 
 
 insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
 	values (nextval('seq_cat_id'),'Food',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Swiggy', (select id from CATEGORY where name='Food'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 
+ 	values (nextval('seq_subcat_id'), 'Swiggy', (select id from CATEGORY where name='Food'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Zomato', (select id from CATEGORY where name='Food'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 
+ 	values (nextval('seq_subcat_id'), 'Zomato', (select id from CATEGORY where name='Food'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'A2B', (select id from CATEGORY where name='Food'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ 	values (nextval('seq_subcat_id'), 'A2B', (select id from CATEGORY where name='Food'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
+ 	values (nextval('seq_subcat_id'), 'Veggies', (select id from CATEGORY where name='Food'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);  
+insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
+ 	values (nextval('seq_subcat_id'), 'Restaurant', (select id from CATEGORY where name='Food'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);   	
  
 
 
@@ -363,5 +367,17 @@ insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_b
  	values (nextval('seq_subcat_id'), 'Internet', (select id from CATEGORY where name='Home'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
  	values (nextval('seq_subcat_id'), 'NewsPaper', (select id from CATEGORY where name='Home'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 	 	
+
+
+
+insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
+	values (nextval('seq_cat_id'),'Misc',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
+insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
+ 	values (nextval('seq_subcat_id'), 'Flowers', (select id from CATEGORY where name='Misc'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
+ 	values (nextval('seq_subcat_id'), 'Key duplicate', (select id from CATEGORY where name='Misc'), CURRENT_DATE, null, 0, 'SYSTEM', null, null); 	
+
+insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
+	values (nextval('seq_cat_id'),'Unknown',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
 
 commit;
