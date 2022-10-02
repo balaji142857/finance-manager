@@ -43,12 +43,9 @@ bulk-imports:
       creditAmount:
         columnIndex: 7
         columnName: "credit amount"
-#      category:
-#        columnIndex: 3
-#        columnName: "Category"
-#      subCategory:
-#        columnIndex: 4
-#        columnName: "Sub Category"
-#      comment:
-#        columnIndex: 5
-#        columnName: "Comments"
+storage:
+  file:
+    import:
+      location: "/tmp/storage/bankStatements"
+      temp:
+        location: "/tmp/storage/temp/"
