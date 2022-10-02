@@ -23,6 +23,9 @@ spring:
             do_not_audit_optimistic_locking_field: false
 app:
   allowedOrigins: "*"
+  fileImport:
+    diskStore:
+      skip: true
 bulk-imports:
   import-formats: 
     ICICI:

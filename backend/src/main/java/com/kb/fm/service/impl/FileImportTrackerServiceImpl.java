@@ -34,6 +34,8 @@ public class FileImportTrackerServiceImpl implements FileImportTrackerService {
     private String fileTempStorageLocation;
     @Value("${storage.file.import.location}")
     private String fileStorageLocation;
+    @Value("${app.fileImport.diskStore.skip}")
+    private boolean skipDiskStorage;
 
     @Override
     public void trackImport(List<BankMultipartFileWrapper> files) {
@@ -42,8 +44,10 @@ public class FileImportTrackerServiceImpl implements FileImportTrackerService {
         for(var i =0; i < entities.size(); i++) {
             files.get(i).setImportId(entities.get(i).getId());
         }
-        saveFilesToDisk(files, fileTempStorageLocation);
-        log.info("Saved the imported files to temp location {}", fileTempStorageLocation);
+        if (!skipDiskStorage) {
+            saveFilesToDisk(files, fileTempStorageLocation);
+            log.info("Saved the imported files to temp location {}", fileTempStorageLocation);
+        }
     }
 
     private List<FileImportMetadata> mapToEntity(List<BankMultipartFileWrapper> files) {
@@ -52,6 +56,9 @@ public class FileImportTrackerServiceImpl implements FileImportTrackerService {
 
     @Override
     public void trackVerification(List<Long> fileIds) {
+        if (skipDiskStorage) {
+            log.warn("Disk storage is disabled, skipping");
+        }
         List<FileImportMetadata> files = repo.findAllById(fileIds);
         for(var file: files) {
             moveFile(fileTempStorageLocation, fileStorageLocation, file);
