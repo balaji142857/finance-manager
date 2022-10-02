@@ -39,7 +39,7 @@ public class IciciBankStatementImporter extends BaseBankStatementImporter {
     @Override
     public List<ExpenseModel> importStatement(BankMultipartFileWrapper fileWrapper) throws BankStatementImportException {
         MultipartFile file = fileWrapper.getFile();
-        String fileName = file.getName();
+        String fileName = file.getOriginalFilename();
         //TODO this should be from the DB instead
         Map<String, ColumnModel> importFormat = importConfig.getImportFormats().get(fileWrapper.getBankName());
         List<ExpenseModel> expenses = new ArrayList<>();
@@ -58,6 +58,7 @@ public class IciciBankStatementImporter extends BaseBankStatementImporter {
                 Asset asset = assetService.getAsset(fileWrapper.getBankName());
                 e.setAsset(null != asset ? asset.getId() : null);
                 e.setBankFormat(fileWrapper.getBankName());
+                e.setImportFileId(fileWrapper.getImportId());
                 Set<Map.Entry<String, ColumnModel>> keys = importFormat.entrySet();
                 Set<String> ignore= Set.of("serial","transactionDetail");
                 var iciciRowOverflowValidationColumns = keys.stream()
@@ -123,18 +124,3 @@ public class IciciBankStatementImporter extends BaseBankStatementImporter {
         return BANK;
     }
 }
-
-//    private final CategoryService catService;
-//                        case "category":
-//                            String cat = getStringValue(row.getCell(s.getValue().getColumnIndex()));
-//                            Category category = StringUtils.hasText(cat) ? null : catService.findCategory(cat);
-//                            e.setCategory(null != category ? category.getId() : null);
-//                            break;
-//                        case "subCategory":
-//                            String subCat = getStringValue(row.getCell(s.getValue().getColumnIndex()));
-//                            SubCategory subCategory = null != subCat ? catService.findSubCategory(subCat) : null;
-//                            e.setSubCategory(null != subCategory ? subCategory.getId() : null);
-//                            break;
-//                        case "comment":
-//                            e.setComment(getStringValue(row.getCell(s.getValue().getColumnIndex())));
-//                            break;

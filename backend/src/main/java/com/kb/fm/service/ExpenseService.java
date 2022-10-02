@@ -13,13 +13,13 @@ public interface ExpenseService {
 
 	List<ExpenseModel> listExpenses();
 
-	public void deleteExpense(Long id);
+	void deleteExpense(Long id);
 	
-	public void addExpenses(List<ExpenseModel> expenses);
+	void addExpenses(List<ExpenseModel> expenses);
 
-	public void addExpenseEntities(List<com.kb.fm.entities.Expense> expenses);
+	void addExpenseEntities(List<com.kb.fm.entities.Expense> expenses);
 
-	public SearchResponseModel<ExpenseModel> filterExpenses(SearchModel<ExpenseSearchModel> filterObj);
+	SearchResponseModel<ExpenseModel> filterExpenses(SearchModel<ExpenseSearchModel> filterObj);
 
 	List<com.kb.fm.entities.Expense> getAllExpenses();
 

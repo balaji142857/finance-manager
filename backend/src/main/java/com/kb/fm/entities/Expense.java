@@ -4,17 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -49,7 +39,8 @@ public class Expense extends BaseEntity{
 	private Date transactionDate;
 	@Column(name="transaction_detail")
 	private String transactionDetail;
-//	@OneToOne
-//	private Document document;
+	@OneToOne
+	@JoinColumn(name="file_import_id")
+	private FileImportMetadata file;
 
 }

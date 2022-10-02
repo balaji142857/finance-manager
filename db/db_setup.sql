@@ -127,6 +127,24 @@ CREATE table HIST_TAG_AUD (
 	revtype smallint
 );
 
+CREATE SEQUENCE seq_file_imports_id
+  MINVALUE 0
+  START WITH 1
+  INCREMENT BY 1
+  CACHE 20;
+
+CREATE table BANK_STATEMENT_FILE_IMPORTS (  
+	id INTEGER PRIMARY KEY,	
+	asset_id INTEGER,
+	file_name varchar(100),
+	import_time DATE,
+	verified_time DATE,
+	temp_storage varchar(100),
+	is_data_imported varchar(1),
+	storage_location varchar(500)
+);
+alter table BANK_STATEMENT_FILE_IMPORTS add constraint imports_file_asset_fk foreign key (asset_id) references ASSET(id);
+
 
 CREATE SEQUENCE seq_exp_id
   MINVALUE 0
@@ -149,11 +167,14 @@ CREATE table EXP (
 	user_comment varchar(100),
 	created_by varchar(100),
 	last_modified DATE,
-	last_modified_by varchar(100)
+	last_modified_by varchar(100),
+	source varchar(2),
+	file_import_id INTEGER
 );
 alter table EXP add constraint exp_asset_fk foreign key (asset_id) references ASSET(id);
 alter table EXP add constraint exp_cat_fk foreign key (cat_id) references CATEGORY(id);
 alter table EXP add constraint exp_subcat_fk foreign key (subcat_id) references SUBCATEGORY(id);
+alter table EXP add constraint exp_file_fk foreign key (file_import_id) references BANK_STATEMENT_FILE_IMPORTS(id);
 
 CREATE table HIST_EXP_AUD (
 	id INTEGER,
@@ -209,56 +230,56 @@ insert into ASSET(id, name, created, version, user_comment, created_by, usage, l
 
 
 insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
-	values (nextval('seq_cat_id'),'ENTERTAINMENT',CURRENT_DATE, null, 0, 'SYSTEM',null, null); 
+	values (nextval('seq_cat_id'),'Entertainment',CURRENT_DATE, null, 0, 'SYSTEM',null, null); 
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Netflix', (select id from CATEGORY where name='ENTERTAINMENT'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'Netflix', (select id from CATEGORY where name='Entertainment'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Disney Hotstar', (select id from CATEGORY where name='ENTERTAINMENT'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'Disney Hotstar', (select id from CATEGORY where name='Entertainment'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Amazon Prime', (select id from CATEGORY where name='ENTERTAINMENT'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'Amazon Prime', (select id from CATEGORY where name='Entertainment'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 
 
 insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
-	values (nextval('seq_cat_id'),'TRAVEL',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
+	values (nextval('seq_cat_id'),'Travel',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'RedBus', (select id from CATEGORY where name='TRAVEL'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'RedBus', (select id from CATEGORY where name='Travel'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Irctc', (select id from CATEGORY where name='TRAVEL'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'Irctc', (select id from CATEGORY where name='Travel'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'OLA', (select id from CATEGORY where name='TRAVEL'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'OLA', (select id from CATEGORY where name='Travel'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Uber', (select id from CATEGORY where name='TRAVEL'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'Uber', (select id from CATEGORY where name='Travel'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 
 insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
-	values (nextval('seq_cat_id'),'MEDICINE',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
+	values (nextval('seq_cat_id'),'Medicine',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'NetMeds', (select id from CATEGORY where name='MEDICINE'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'NetMeds', (select id from CATEGORY where name='Medicine'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Local Shop', (select id from CATEGORY where name='MEDICINE'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'Local Shop', (select id from CATEGORY where name='Medicine'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Amazon Pharmacy', (select id from CATEGORY where name='MEDICINE'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
-
-
-insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
-	values (nextval('seq_cat_id'),'INSURANCE',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
-insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'LIC', (select id from CATEGORY where name='INSURANCE'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
-insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'ICICI Lombard', (select id from CATEGORY where name='INSURANCE'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
-insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'HDFC Life', (select id from CATEGORY where name='INSURANCE'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'Amazon Pharmacy', (select id from CATEGORY where name='Medicine'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 
 
 insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
-	values (nextval('seq_cat_id'),'SHOPPING',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
+	values (nextval('seq_cat_id'),'Insurance',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Flipkart', (select id from CATEGORY where name='SHOPPING'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'LIC', (select id from CATEGORY where name='Insurance'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Amazon', (select id from CATEGORY where name='SHOPPING'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'ICICI Lombard', (select id from CATEGORY where name='Insurance'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'CLIQ', (select id from CATEGORY where name='SHOPPING'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+ values (nextval('seq_subcat_id'), 'HDFC Life', (select id from CATEGORY where name='Insurance'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+
+
+insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 
+	values (nextval('seq_cat_id'),'Shopping',CURRENT_DATE, null, 0, 'SYSTEM',null, null);
 insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
- values (nextval('seq_subcat_id'), 'Decathalon', (select id from CATEGORY where name='SHOPPING'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);   
+ values (nextval('seq_subcat_id'), 'Flipkart', (select id from CATEGORY where name='Shopping'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
+ values (nextval('seq_subcat_id'), 'Amazon', (select id from CATEGORY where name='Shopping'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
+ values (nextval('seq_subcat_id'), 'CLIQ', (select id from CATEGORY where name='Shopping'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);
+insert into SUBCATEGORY ( id, name, cat_id, created, comment, version, created_by, last_modified, last_modified_by)
+ values (nextval('seq_subcat_id'), 'Decathalon', (select id from CATEGORY where name='Shopping'), CURRENT_DATE, null, 0, 'SYSTEM', null, null);   
 
 
 insert into CATEGORY (id, name, created, comment, version, created_by, last_modified, last_modified_by) 

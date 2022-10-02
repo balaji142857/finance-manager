@@ -18,3 +18,10 @@ management:
     web:
       exposure:
         include: "*"
+
+storage:
+  file:
+    import:
+      location: "/home/balaji142857/expense_tracker_imports/"
+      temp:
+        location: "/home/balaji142857/expense_tracker_imports_temp/"

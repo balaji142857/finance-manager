@@ -12,7 +12,7 @@ public class NoOpBankStatementImporter extends BaseBankStatementImporter {
 
     @Override
     List<ExpenseModel> importStatement(BankMultipartFileWrapper fileWrapper) throws BankStatementImportException {
-        throw new BankStatementImportException(fileWrapper.getFile().getName(), "No importer registered to process the statements of this bank");
+        throw new BankStatementImportException(fileWrapper.getFile().getOriginalFilename(), "No importer registered to process the statements of this bank");
     }
 
     @Override

@@ -79,7 +79,7 @@ public class ExpenseController {
 	}
 
 	@PostMapping("/import/save")
-	public GenericResponse<List<ExpenseModel>> importExpenses(@RequestBody List<ExpenseModel> expenseList) throws FinanceManagerException {
+	public GenericResponse<List<ExpenseModel>> importExpenses(@RequestBody List<ExpenseModel> expenseList) {
 		log.info("received request {}", expenseList);
 		service.addExpenses(expenseList);
 		return null;
