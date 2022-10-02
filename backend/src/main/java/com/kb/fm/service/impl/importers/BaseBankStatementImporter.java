@@ -21,7 +21,7 @@ public abstract class BaseBankStatementImporter implements BankStatementImporter
     public List<ExpenseModel> importBankStatement(BankMultipartFileWrapper fileWrapper) throws BankStatementImportException {
         try {
             if (null == fileWrapper.getFile()) {
-                log.warn("Input file {} is null, returning empty response", fileWrapper.getBankName());
+                log.warn("Input file for bank: {} is null, returning empty response", fileWrapper.getBankName());
                 return Collections.emptyList();
             }
             return importStatement(fileWrapper);

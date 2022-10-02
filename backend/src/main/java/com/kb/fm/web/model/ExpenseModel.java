@@ -22,4 +22,5 @@ public class ExpenseModel {
 	private String transactionDetail;
 	private boolean isReviewRequired;
 	private String bankFormat;
+	private Long importFileId;
 }

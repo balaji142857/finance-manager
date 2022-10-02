@@ -5,6 +5,7 @@ import static com.kb.fm.specs.SpecificationHelperUtil.addConditionsForDateRage;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -16,18 +17,16 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import com.kb.fm.entities.*;
+import com.kb.fm.repo.FileImportTrackerRepo;
+import com.kb.fm.service.FileImportTrackerService;
 import com.kb.fm.specs.SpecificationHelperUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kb.fm.entities.Asset;
-import com.kb.fm.entities.Category;
-import com.kb.fm.entities.DashboardConfig;
-import com.kb.fm.entities.Expense;
 import com.kb.fm.repo.ExpenseRepository;
 import com.kb.fm.service.AssetService;
 import com.kb.fm.service.CategoryService;
@@ -49,20 +48,23 @@ public class ExpenseServiceImpl implements ExpenseService {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@Autowired
-	private ExpenseRepository repo;
-
-	@Autowired
-	private AssetService assetService;
-
-	@Autowired
-	private CategoryService catService;
+	private final ExpenseRepository repo;
+	private final AssetService assetService;
+	private final CategoryService catService;
+	private final FileImportTrackerService importTrackerService;
+	private final FileImportTrackerRepo fileRepo;
 	
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void addExpenses(List<com.kb.fm.web.model.ExpenseModel> expenses) {
-		List<Expense> entities = expenses.stream().map(this::modelToEntity)
+		List<Expense> entities = expenses.stream().map(this::modelToEntity).collect(Collectors.toList());
+		List<Long> fileIds = entities.stream()
+				.map(Expense::getFile)
+				.filter(Objects::nonNull)
+				.map(FileImportMetadata::getId)
+				.distinct()
 				.collect(Collectors.toList());
+		importTrackerService.trackVerification(fileIds);
 		repo.saveAll(entities);
 	}
 
@@ -95,7 +97,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<?> query = cb.createQuery();
 		Root<Expense> exp = query.from(Expense.class);
-		addFilterCritaria(exp, searchModel, cb, query);
+		addFilterCriteria(exp, searchModel, cb, query);
 		switch (searchModel.getChartType()) {
 		case "getExpenseByYearMonth":
 		case "getExpenseByMonthDay":
@@ -152,7 +154,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 //		query.orderBy(cb.asc(dateSelection));
 	}
 	
-	private void addFilterCritaria(Root<Expense> exp, ExpenseSearchModel searchModel, CriteriaBuilder cb, CriteriaQuery<?> query) {
+	private void addFilterCriteria(Root<Expense> exp, ExpenseSearchModel searchModel, CriteriaBuilder cb, CriteriaQuery<?> query) {
 
 		SpecificationHelperUtil.addCondition(query, addConditionForNumberRange(exp, cb, "amount",
 				null != searchModel.getMinAmount() ? BigDecimal.valueOf(searchModel.getMinAmount()) : null,
@@ -188,6 +190,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 		dbEntity.setAmount(BigDecimal.valueOf(model.getAmount()));
 		dbEntity.setTransactionDate(DateUtil.convert(model.getTransactionDate()));
 		dbEntity.setTransactionDetail(model.getTransactionDetail());
+		dbEntity.setFile(null != model.getImportFileId() ? fileRepo.getById(model.getImportFileId()) : null);
 		Asset asset = assetService.getAsset(model.getAsset());
 		asset.setUsage(null != asset.getUsage() ? asset.getUsage().add(dbEntity.getAmount()) : dbEntity.getAmount());
 		asset.getExpenses().add(dbEntity);

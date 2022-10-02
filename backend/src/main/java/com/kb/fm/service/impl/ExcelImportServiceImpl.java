@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import com.kb.fm.exceptions.BankStatementImportException;
+import com.kb.fm.service.*;
 import com.kb.fm.service.impl.importers.BankStatementImportHelper;
 import com.kb.fm.web.model.imports.BankMultipartFileWrapper;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,6 @@ import org.springframework.util.ObjectUtils;
 import com.kb.fm.entities.Asset;
 import com.kb.fm.entities.CatSubCatIdModel;
 import com.kb.fm.entities.Expense;
-import com.kb.fm.service.AssetService;
-import com.kb.fm.service.CategoryService;
-import com.kb.fm.service.ExpenseService;
-import com.kb.fm.service.ImportService;
 import com.kb.fm.web.model.ExpenseModel;
 import com.kb.fm.web.model.GenericResponse;
 
@@ -30,19 +27,22 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ImportServiceImpl implements ImportService {
+public class ExcelImportServiceImpl implements ImportService {
 
 
 	private final AssetService assetService;
 	private final CategoryService catService;
 	private final ExpenseService expService;
 	private final BankStatementImportHelper importHelper;
+	private final FileImportTrackerService importTrackerService;
 
 	@Override
 	public GenericResponse<List<ExpenseModel>> readBankStatements(List<BankMultipartFileWrapper> files) throws BankStatementImportException {
 		if (null == files) {
 			return new GenericResponse<>(Collections.<ExpenseModel>emptyList(), "Nothing to import");
 		}
+		importTrackerService.trackImport(files);
+		log.info("Added entry in the import tracking table");
 		List<ExpenseModel> expenseList = new ArrayList<>();
 		for(BankMultipartFileWrapper fileWrapper: files) {
 			try {
@@ -53,7 +53,8 @@ public class ImportServiceImpl implements ImportService {
 				//TODO need to get this err back to UI - do not block importing of other bank statements
 			} catch(Exception e) {
 				//TODO same exception handling applies here as well
-				throw new BankStatementImportException(fileWrapper.getFile().getName(), "Error occurred while importing the bank statement. Please check the logs", e);
+				throw new BankStatementImportException(fileWrapper.getFile().getOriginalFilename(),
+						"Error occurred while importing the bank statement. Please check the logs", e);
 			}
 		}
 		//TODO save the file used to import to some temp location
