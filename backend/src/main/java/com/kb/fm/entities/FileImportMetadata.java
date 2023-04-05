@@ -1,14 +1,20 @@
 package com.kb.fm.entities;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Data
 @Table(name = "BANK_STATEMENT_FILE_IMPORTS")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class FileImportMetadata {
     @Id
     @GeneratedValue(generator = "seq_file_imports_id", strategy = GenerationType.SEQUENCE)

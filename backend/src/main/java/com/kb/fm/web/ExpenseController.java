@@ -1,14 +1,12 @@
 package com.kb.fm.web;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.kb.fm.entities.Expense;
 import com.kb.fm.exceptions.BankStatementImportException;
+import com.kb.fm.service.ExpenseService;
+import com.kb.fm.service.ImportService;
+import com.kb.fm.web.model.*;
 import com.kb.fm.web.model.imports.BankMultipartFileWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,26 +14,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kb.fm.exceptions.FinanceManagerException;
-import com.kb.fm.service.ExpenseService;
-import com.kb.fm.service.ImportService;
-import com.kb.fm.util.DateUtil;
-import com.kb.fm.web.model.ExpenseModel;
-import com.kb.fm.web.model.ExpenseSearchModel;
-import com.kb.fm.web.model.GenericResponse;
-import com.kb.fm.web.model.SearchModel;
-import com.kb.fm.web.model.SearchResponseModel;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 @RestController
 @RequestMapping("/expenses")
@@ -43,9 +29,8 @@ import com.kb.fm.web.model.SearchResponseModel;
 @RequiredArgsConstructor
 public class ExpenseController {
 	
-	private final  ExpenseService service;
+	private final ExpenseService service;
 	private final ImportService impService;
-
 	@PostMapping
 	public void addExpense(@RequestBody List<ExpenseModel> expenses) {
 		if (CollectionUtils.isEmpty(expenses)) {
@@ -91,14 +76,14 @@ public class ExpenseController {
 	}
 	
 	@PostMapping("/download")
-	public void  downloadExpenses(HttpServletResponse response) throws IOException {
+	public void downloadExpenses(HttpServletResponse response) throws IOException {
 		try (Workbook wb = new XSSFWorkbook()){
 			Sheet sheet = wb.createSheet("Expenses");
 			List<com.kb.fm.entities.Expense> expenses = service.getAllExpenses();
 			ListIterator<com.kb.fm.entities.Expense> iterator = expenses.listIterator();
 			createHeadingRow(sheet);
 			while(iterator.hasNext()) {
-				com.kb.fm.entities.Expense exp = iterator.next();
+				Expense exp = iterator.next();
 				Row row = sheet.createRow(iterator.nextIndex());
 				Cell cell = row.createCell(0);
 				cell.setCellValue(exp.getAsset().getName());
@@ -109,7 +94,7 @@ public class ExpenseController {
 				cell = row.createCell(3);
 				cell.setCellValue(null != exp.getAmount() ? exp.getAmount().doubleValue() : 0);
 				cell = row.createCell(4);
-				cell.setCellValue(DateUtil.convertDateToDatePickerFormat(exp.getTransactionDate()));
+				cell.setCellValue(exp.getTransactionDate());
 				cell = row.createCell(5);
 				cell.setCellValue(exp.getTransactionDetail());
 				cell = row.createCell(6);

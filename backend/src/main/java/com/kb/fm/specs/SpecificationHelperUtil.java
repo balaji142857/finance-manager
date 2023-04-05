@@ -1,20 +1,16 @@
 package com.kb.fm.specs;
 
-import static com.kb.fm.util.DateUtil.convert;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.experimental.UtilityClass;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import org.springframework.util.CollectionUtils;
-
-
-import lombok.experimental.UtilityClass;
+import static com.kb.fm.util.DateUtil.convert;
 
 @UtilityClass
 public class SpecificationHelperUtil {
@@ -54,12 +50,14 @@ public class SpecificationHelperUtil {
 		if (CollectionUtils.isEmpty(predicates)) {
 			predicates.add(cb.conjunction());
 		}
-		List<Predicate> validPredicates = predicates.stream().filter(Objects::nonNull).collect(Collectors.toList());
+		List<Predicate> validPredicates = predicates.stream().filter(Objects::nonNull).toList();
 		if (validPredicates.isEmpty())
 			return cb.conjunction();
 		if (validPredicates.size() == 1)
 			return validPredicates.get(0);
-		Predicate previous = validPredicates.get(0), current, finalPredicate = null;
+		Predicate previous = validPredicates.get(0);
+		Predicate current;
+		Predicate finalPredicate = null;
 		for (int i = 1; i < validPredicates.size(); i++) {
 			current = validPredicates.get(i);
 			finalPredicate = cb.and(previous, current);
@@ -75,7 +73,7 @@ public class SpecificationHelperUtil {
 	}
 
 	public static String getContains(String input) {
-		return LIKE + input + LIKE;
+		return getEndsWith(getStartsWith(input));
 	}
 
 	public static String getStartsWith(String input) {

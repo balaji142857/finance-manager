@@ -25,8 +25,9 @@
  - checkout the back-end source code from github repository by executing `git clone https://github.com/balaji142857/cloud-projects.git`
  - navigate to finance-manager directory (will be inside the cloned directory)
  - execute `maven install` (this is bound to take some time on first run)
- - execute `mvn spring-boot:run`
+ - execute `gradlew.sh bootRun`
  - test the backend app status by opening this url `http://localhost:8980/actuator`
+ - ensure the openAPI endoint is opening fine `http://localhost:8080/swagger-ui.html` `http://localhost:8080/v3/api-docs`
 
 ** 4. UI setup **
 - checkout the UI source code from github repository by executing `git clone https://github.com/balaji142857/finance-manager-web.git`

@@ -1,6 +1,9 @@
 server:
   port: 8980
 spring:
+  main:
+    banner:
+      mode: CONSOLE
   application:
     name: finance-manager
   datasource:
@@ -26,8 +29,17 @@ app:
   fileImport:
     diskStore:
       skip: true
+  messages:
+    enrichment: Enriched %d records. Rest %d records have been flagged for review
+    noEnrichment: No enrichment done
+  storage:
+    file:
+      import:
+        location: "/tmp/storage/bankStatements"
+        temp:
+          location: "/tmp/storage/temp/"
 bulk-imports:
-  import-formats: 
+  import-formats:
     ICICI:
       serial:
         columnIndex: 1
@@ -46,9 +58,3 @@ bulk-imports:
       creditAmount:
         columnIndex: 7
         columnName: "credit amount"
-storage:
-  file:
-    import:
-      location: "/tmp/storage/bankStatements"
-      temp:
-        location: "/tmp/storage/temp/"

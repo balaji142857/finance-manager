@@ -1,49 +1,45 @@
 package com.kb.fm.service.impl;
 
-import static com.kb.fm.specs.SpecificationHelperUtil.addConditionForNumberRange;
-import static com.kb.fm.specs.SpecificationHelperUtil.addConditionsForDateRage;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
-
 import com.kb.fm.entities.*;
+import com.kb.fm.exceptions.FinanceManagerException;
+import com.kb.fm.repo.ExpenseRepository;
 import com.kb.fm.repo.FileImportTrackerRepo;
+import com.kb.fm.service.AssetService;
+import com.kb.fm.service.CategoryService;
+import com.kb.fm.service.ExpenseService;
 import com.kb.fm.service.FileImportTrackerService;
+import com.kb.fm.specs.ExpenseSearchSpecification;
+import com.kb.fm.specs.PaginationHelper;
 import com.kb.fm.specs.SpecificationHelperUtil;
+import com.kb.fm.util.DateUtil;
+import com.kb.fm.web.model.ChartData;
+import com.kb.fm.web.model.ExpenseSearchModel;
+import com.kb.fm.web.model.SearchModel;
+import com.kb.fm.web.model.SearchResponseModel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.*;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kb.fm.repo.ExpenseRepository;
-import com.kb.fm.service.AssetService;
-import com.kb.fm.service.CategoryService;
-import com.kb.fm.service.ExpenseService;
-import com.kb.fm.specs.ExpenseSearchSpecification;
-import com.kb.fm.specs.PaginationHelper;
-import com.kb.fm.util.DateUtil;
-import com.kb.fm.web.model.ChartData;
-import com.kb.fm.web.model.ExpenseSearchModel;
-import com.kb.fm.web.model.SearchModel;
-import com.kb.fm.web.model.SearchResponseModel;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
-import lombok.RequiredArgsConstructor;
+import static com.kb.fm.specs.SpecificationHelperUtil.addConditionForNumberRange;
+import static com.kb.fm.specs.SpecificationHelperUtil.addConditionsForDateRage;
 
 @Service
 @RequiredArgsConstructor
 public class ExpenseServiceImpl implements ExpenseService {
+	
+	private static final String FIELD_AMOUNT = "amount";
+	private static final String FIELD_TRANSACTION_DATE = "transactionDate";
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -57,13 +53,13 @@ public class ExpenseServiceImpl implements ExpenseService {
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void addExpenses(List<com.kb.fm.web.model.ExpenseModel> expenses) {
-		List<Expense> entities = expenses.stream().map(this::modelToEntity).collect(Collectors.toList());
+		List<Expense> entities = expenses.stream().map(this::modelToEntity).toList();
 		List<Long> fileIds = entities.stream()
 				.map(Expense::getFile)
 				.filter(Objects::nonNull)
 				.map(FileImportMetadata::getId)
 				.distinct()
-				.collect(Collectors.toList());
+				.toList();
 		importTrackerService.trackVerification(fileIds);
 		repo.saveAll(entities);
 	}
@@ -71,7 +67,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 	@Override
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	public List<com.kb.fm.web.model.ExpenseModel> listExpenses() {
-		return this.getAllExpenses().stream().map(this::entityToModel).collect(Collectors.toList());
+		return this.getAllExpenses().stream().map(this::entityToModel).toList();
 	}
 	
 	@Override
@@ -84,7 +80,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteExpense(Long id) {
-		Expense exp = repo.getOne(id);
+		Expense exp = repo.getReferenceById(id);
 		exp.getAsset().setUsage(exp.getAsset().getUsage().subtract(exp.getAmount()));
 		exp.getAsset().getExpenses().remove(exp);//TODO why load all expenses just to remove the link b/w an asset and expense
 		assetService.save(exp.getAsset());
@@ -99,33 +95,31 @@ public class ExpenseServiceImpl implements ExpenseService {
 		Root<Expense> exp = query.from(Expense.class);
 		addFilterCriteria(exp, searchModel, cb, query);
 		switch (searchModel.getChartType()) {
-		case "getExpenseByYearMonth":
-		case "getExpenseByMonthDay":
-			dateGrouping(cb, query, exp,config.getDateGroupingOracleFormat());
-			break;
-		case "getExpenseByCategories":
-			if (null == searchModel.getCatJoin()) {
-				searchModel.setCatJoin(exp.join("category"));
+			case "getExpenseByYearMonth", "getExpenseByMonthDay" ->
+					dateGrouping(cb, query, exp, config.getDateGroupingOracleFormat());
+			case "getExpenseByCategories" -> {
+				if (null == searchModel.getCatJoin()) {
+					searchModel.setCatJoin(exp.join("category"));
+				}
+				Join<Expense, Category> catJoin = searchModel.getCatJoin();
+				query.multiselect(catJoin.get("name"), cb.sum(exp.get(FIELD_AMOUNT)));
+				query.groupBy(catJoin.get("name"));
 			}
-			Join<Expense, Category> catJoin = searchModel.getCatJoin();
-			query.multiselect(catJoin.get("name"), cb.sum(exp.get("amount" )));
-			query.groupBy(catJoin.get("name"));
-			break;
-		case "getAssetUsage":
-			if (null == searchModel.getAssetJoin()) {
-				searchModel.setAssetJoin(exp.join("asset"));
+			case "getAssetUsage" -> {
+				if (null == searchModel.getAssetJoin()) {
+					searchModel.setAssetJoin(exp.join("asset"));
+				}
+				Join<Expense, Asset> assetJoin = searchModel.getAssetJoin();
+				query.multiselect(assetJoin.get("name"), cb.sum(exp.get(FIELD_AMOUNT)));
+				query.groupBy(assetJoin.get("name"));
 			}
-			Join<Expense, Asset> assetJoin = searchModel.getAssetJoin();
-			query.multiselect(assetJoin.get("name"), cb.sum(exp.get("amount" )));
-			query.groupBy(assetJoin.get("name"));
-			break;
-		default:
-			throw new RuntimeException("Invalid chart type reqeust");//TODO use app specific exception
+			default ->
+					throw new FinanceManagerException("Invalid chart type: " + searchModel.getChartType() + " requested");
 		}
 		Query aquery = entityManager.createQuery(query);
 		List<Object[]> result1 = aquery.getResultList();
 		return result1.stream().map(item -> new ChartData((String) item[0], (BigDecimal) item[1], null))
-				.collect(Collectors.toList());
+				.toList();
 	}
 	
 	@Override
@@ -137,18 +131,18 @@ public class ExpenseServiceImpl implements ExpenseService {
 	@Override
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	public SearchResponseModel<com.kb.fm.web.model.ExpenseModel> filterExpenses(SearchModel<ExpenseSearchModel> filterObj) {
-		Pageable value1 = PaginationHelper.getPageable(filterObj.getOptions(), "transactionDate");
+		Pageable value1 = PaginationHelper.getPageable(filterObj.getOptions(), FIELD_TRANSACTION_DATE);
 		Page<Expense> value = repo.findAll(ExpenseSearchSpecification.search(filterObj.getData()),
 				value1);
 		SearchResponseModel<com.kb.fm.web.model.ExpenseModel> returnValue = new SearchResponseModel<>();
 		returnValue.setOverallCount(value.getTotalElements());
-		returnValue.setData(value.getContent().stream().map(this::entityToModel).collect(Collectors.toList()));
+		returnValue.setData(value.getContent().stream().map(this::entityToModel).toList());
 		return returnValue;
 	}
 		
 	private <T> void dateGrouping(CriteriaBuilder cb, CriteriaQuery<T> query, Root<Expense> exp, String format) {
-		Expression<String> dateSelection = cb.function("TO_CHAR", String.class, exp.get("transactionDate"), cb.literal(format));
-		query.multiselect(dateSelection, cb.sum(exp.get("amount" )));
+		Expression<String> dateSelection = cb.function("TO_CHAR", String.class, exp.get(FIELD_TRANSACTION_DATE), cb.literal(format));
+		query.multiselect(dateSelection, cb.sum(exp.get(FIELD_AMOUNT )));
 		query.groupBy(dateSelection);
 		//TODO HIGH not a groupBy expression error
 //		query.orderBy(cb.asc(dateSelection));
@@ -156,11 +150,11 @@ public class ExpenseServiceImpl implements ExpenseService {
 	
 	private void addFilterCriteria(Root<Expense> exp, ExpenseSearchModel searchModel, CriteriaBuilder cb, CriteriaQuery<?> query) {
 
-		SpecificationHelperUtil.addCondition(query, addConditionForNumberRange(exp, cb, "amount",
+		SpecificationHelperUtil.addCondition(query, addConditionForNumberRange(exp, cb, FIELD_AMOUNT,
 				null != searchModel.getMinAmount() ? BigDecimal.valueOf(searchModel.getMinAmount()) : null,
 				null != searchModel.getMaxAmount() ? BigDecimal.valueOf(searchModel.getMaxAmount()) : null));
 
-		SpecificationHelperUtil.addCondition(query, addConditionsForDateRage(exp, cb, "transactionDate",
+		SpecificationHelperUtil.addCondition(query, addConditionsForDateRage(exp, cb, FIELD_TRANSACTION_DATE,
 				searchModel.getFromDate(), searchModel.getToDate()));
 		
 		if (CollectionUtils.isNotEmpty(searchModel.getCategory())) {
@@ -177,7 +171,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 	}
 
 	private Expense modelToEntity(com.kb.fm.web.model.ExpenseModel model) {
-		Expense dbEntity = null != model.getId() ? repo.getOne(model.getId()) : new Expense();
+		Expense dbEntity = null != model.getId() ? repo.getReferenceById(model.getId()) : new Expense();
 		if (null != dbEntity.getAsset() && !model.getAsset().equals(dbEntity.getAsset().getId())) {
 			dbEntity.getAsset().setUsage(dbEntity.getAsset().getUsage().subtract(dbEntity.getAmount()));
 			dbEntity.getAsset().getExpenses().remove(dbEntity);
@@ -190,7 +184,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 		dbEntity.setAmount(BigDecimal.valueOf(model.getAmount()));
 		dbEntity.setTransactionDate(DateUtil.convert(model.getTransactionDate()));
 		dbEntity.setTransactionDetail(model.getTransactionDetail());
-		dbEntity.setFile(null != model.getImportFileId() ? fileRepo.getById(model.getImportFileId()) : null);
+		dbEntity.setFile(null != model.getImportFileId() ? fileRepo.getReferenceById(model.getImportFileId()) : null);
 		Asset asset = assetService.getAsset(model.getAsset());
 		asset.setUsage(null != asset.getUsage() ? asset.getUsage().add(dbEntity.getAmount()) : dbEntity.getAmount());
 		asset.getExpenses().add(dbEntity);

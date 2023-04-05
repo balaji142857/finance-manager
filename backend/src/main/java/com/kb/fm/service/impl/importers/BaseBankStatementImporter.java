@@ -17,22 +17,20 @@ import java.util.*;
 @Slf4j
 public abstract class BaseBankStatementImporter implements BankStatementImporter {
 
+    abstract List<ExpenseModel> importStatement(BankMultipartFileWrapper files) throws BankStatementImportException;
+
     @Override
     public List<ExpenseModel> importBankStatement(BankMultipartFileWrapper fileWrapper) throws BankStatementImportException {
         try {
-            if (null == fileWrapper.getFile()) {
+            if (Objects.isNull(fileWrapper.getFile())) {
                 log.warn("Input file for bank: {} is null, returning empty response", fileWrapper.getBankName());
                 return Collections.emptyList();
             }
             return importStatement(fileWrapper);
-        } catch(BankStatementImportException e) {
-            throw e;
         } catch(Exception e) {
             throw new BankStatementImportException(fileWrapper.getFile().getName(), "Error occurred while importing bank statement", e);
         }
     }
-
-    abstract List<ExpenseModel> importStatement(BankMultipartFileWrapper files) throws BankStatementImportException;
 
     protected boolean isAllBlank(Row row, List<Integer> columnIndexes) {
         if(CollectionUtils.isEmpty(columnIndexes)) {
@@ -52,22 +50,23 @@ public abstract class BaseBankStatementImporter implements BankStatementImporter
         return null != cell ? cell.getStringCellValue() : null;
     }
 
-    //TODO BAKRISHN the whole point of using a big decimal is lost if we first try to get this a double from string value
+    // TODO no point in using bigDecimal if we read as double
+    // POI does not provide API to read numeric cells as BigDecimal
     protected static Double getDoubleValue(Cell cell) {
         if (Objects.isNull(cell)) {
             return null;
         }
         CellType type = cell.getCellTypeEnum();
-        if (type.equals(CellType.BLANK)) {
+        if (CellType.BLANK.equals(type)) {
             throw new NumberFormatException("Empty content, cannot convert to a double value");
         }
-        if (type.equals(CellType.STRING)) {
+        if (CellType.STRING.equals(type)) {
             return Double.parseDouble(cell.getStringCellValue());
         }
         return cell.getNumericCellValue();
     }
 
-    protected Iterable<? extends Map.Entry<String, ColumnModel>> sort(Set<Map.Entry<String, ColumnModel>> entrySet) {
+    protected Iterable<Map.Entry<String, ColumnModel>> sort(Set<Map.Entry<String, ColumnModel>> entrySet) {
         var list = new ArrayList<>(entrySet);
         list.sort(Map.Entry.comparingByValue(Comparator.comparing(ColumnModel::getReadOrder, Comparator.nullsLast(Comparator.naturalOrder()))));
         return list;

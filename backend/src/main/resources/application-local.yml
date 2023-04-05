@@ -1,6 +1,9 @@
 server:
   port: 8080
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   datasource:
     url: "jdbc:postgresql://localhost:5432/finman-db"
     username: postgres

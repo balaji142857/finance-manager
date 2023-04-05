@@ -1,25 +1,19 @@
 package com.kb.fm.specs;
 
 
-import static  com.kb.fm.specs.SpecificationHelperUtil.addConditionForNumberRange;
-import static  com.kb.fm.specs.SpecificationHelperUtil.addConditionsForDateRage;
-import static  com.kb.fm.specs.SpecificationHelperUtil.getContains;
-import static  com.kb.fm.specs.SpecificationHelperUtil.getPredicate;
+import com.kb.fm.entities.Expense;
+import com.kb.fm.web.model.ExpenseSearchModel;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.experimental.UtilityClass;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.data.jpa.domain.Specification;
-
-import com.kb.fm.entities.Expense;
-import com.kb.fm.web.model.ExpenseSearchModel;
-
-import lombok.experimental.UtilityClass;
+import static com.kb.fm.specs.SpecificationHelperUtil.*;
 
 @UtilityClass
 public class ExpenseSearchSpecification {

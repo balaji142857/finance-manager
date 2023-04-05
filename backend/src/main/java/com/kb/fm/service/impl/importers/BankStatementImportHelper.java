@@ -4,12 +4,12 @@ import com.kb.fm.exceptions.BankStatementImportException;
 import com.kb.fm.service.BankStatementImporter;
 import com.kb.fm.web.model.ExpenseModel;
 import com.kb.fm.web.model.imports.BankMultipartFileWrapper;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +25,7 @@ public class BankStatementImportHelper {
     private final ConcurrentMap<String, BankStatementImporter> registry = new ConcurrentHashMap<>();
 
 
-    public Collection<? extends ExpenseModel> importStatements(BankMultipartFileWrapper file) throws BankStatementImportException {
+    public Collection<ExpenseModel> importStatements(BankMultipartFileWrapper file) throws BankStatementImportException {
         String bankName = file.getBankName();
         BankStatementImporter importer = registry.getOrDefault(bankName, defaultImporter);
         return importer.importBankStatement(file);
@@ -35,6 +35,7 @@ public class BankStatementImportHelper {
     public void initialize() {
         if (CollectionUtils.isEmpty(bankStatementImporters)) {
             log.warn("No Bank statement importers are registered. Bank statement import functionality will not work");
+            return;
         }
         registerImporters(bankStatementImporters);
     }

@@ -1,13 +1,12 @@
 package com.kb.fm.entities;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.*;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
 @Entity

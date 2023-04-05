@@ -1,11 +1,10 @@
 package com.kb.fm.entities;
 
-import java.util.Date;
-
-import javax.persistence.MappedSuperclass;
-
+import jakarta.persistence.MappedSuperclass;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+
+import java.util.Date;
 
 @MappedSuperclass
 public abstract class BaseEntity {
